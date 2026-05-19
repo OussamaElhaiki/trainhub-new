@@ -20,7 +20,7 @@ export default async function RootLayout({
   children: ReactNode
 }>) {
   return (
-    <html lang="lt" className={cn("font-sans", geist.variable)} suppressHydrationWarning>
+    <html lang="lt" className={cn("dark font-sans", geist.variable)} suppressHydrationWarning>
       <body className="flex flex-col min-h-screen bg-background text-foreground overflow-x-hidden">
         <StoreProvider>
           <Header />
