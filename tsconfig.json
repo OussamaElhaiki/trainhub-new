@@ -1,5 +1,11 @@
 {
   "compilerOptions": {
+    "forceConsistentCasingInFileNames": true,
+    "verbatimModuleSyntax": true,
+    "noImplicitOverride": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitAny": true,
+
     "target": "ES2017",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
