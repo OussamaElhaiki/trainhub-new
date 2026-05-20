@@ -12,7 +12,7 @@ export const trainSchema = z.object({
   status: z.enum(["on-time", "delayed", "cancelled"]).default("on-time"),
 })
 
-export type Train = z.infer<typeof trainSchema>
+export type ITrain = z.infer<typeof trainSchema>
 
 export const trainSearchSchema = z.object({
   trainNumber: z.string().optional(),
@@ -21,4 +21,4 @@ export const trainSearchSchema = z.object({
   status: z.enum(["all", "on-time", "delayed", "cancelled"]),
 })
 
-export type TrainSearch = z.infer<typeof trainSearchSchema>
+export type ITrainSearch = z.infer<typeof trainSearchSchema>

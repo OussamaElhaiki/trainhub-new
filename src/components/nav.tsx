@@ -11,8 +11,8 @@ export function Nav(props?: IProps) {
 
   return (
     <nav className="flex flex-1 items-center justify-end gap-4">
-      {menu.map((item) => (
-        <NavItem key={item.slug} item={item} />
+      {menu.map((item, i) => (
+        <NavItem key={item.slug} item={item} align={i === menu.length - 1 ? "right" : "left"} />
       ))}
     </nav>
   )

@@ -7,11 +7,11 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { TrainDetailsDialog } from "@/components/trains/train-details-dialog"
-import { mockTrains } from "@/data/trains"
-import { statusConfig, sortByDepartureTime, calculateDuration } from "@/lib/train-utils"
+import { getTrains } from "@/lib/train-db"
+import { statusConfig, calculateDuration } from "@/lib/train-utils"
 
-export default function AllTrainsPage() {
-  const trains = sortByDepartureTime(mockTrains)
+export default async function AllTrainsPage() {
+  const trains = await getTrains()
 
   return (
     <div className="space-y-6">

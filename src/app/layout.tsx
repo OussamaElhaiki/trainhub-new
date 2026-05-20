@@ -14,11 +14,12 @@ export const metadata: Metadata = {
   description: "Track and view train schedules departing from Vilnius railway station."
 }
 
-export default async function RootLayout({
-  children
-}: Readonly<{
+interface IProps {
   children: ReactNode
-}>) {
+}
+
+export default async function RootLayout(props: IProps) {
+  const { children } = props
   return (
     <html lang="lt" className={cn("dark font-sans", geist.variable)} suppressHydrationWarning>
       <body className="flex flex-col min-h-screen bg-background text-foreground overflow-x-hidden">

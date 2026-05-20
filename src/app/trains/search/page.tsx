@@ -1,9 +1,10 @@
 import { TrainSearchForm } from "@/components/trains/train-search-form"
-import { mockTrains } from "@/data/trains"
+import { getTrains } from "@/lib/train-db"
 import { getUniquePlatforms } from "@/lib/train-utils"
 
-export default function TrainSearchPage() {
-  const platforms = getUniquePlatforms(mockTrains)
+export default async function TrainSearchPage() {
+  const trains = await getTrains()
+  const platforms = getUniquePlatforms(trains)
 
   return (
     <div className="space-y-6">
@@ -14,7 +15,7 @@ export default function TrainSearchPage() {
         </p>
       </div>
 
-      <TrainSearchForm trains={mockTrains} platforms={platforms} />
+      <TrainSearchForm trains={trains} platforms={platforms} />
     </div>
   )
 }

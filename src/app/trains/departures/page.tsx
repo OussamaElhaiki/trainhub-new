@@ -6,11 +6,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { mockTrains } from "@/data/trains"
-import { statusConfig, sortByDepartureTime } from "@/lib/train-utils"
+import { getTrains } from "@/lib/train-db"
+import { statusConfig } from "@/lib/train-utils"
 
-export default function DepartureSchedulePage() {
-  const trains = sortByDepartureTime(mockTrains)
+export default async function DepartureSchedulePage() {
+  const trains = await getTrains()
 
   return (
     <div className="space-y-6">

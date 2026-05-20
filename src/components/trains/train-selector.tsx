@@ -14,7 +14,8 @@ interface IProps {
   selected: string
 }
 
-export function TrainSelector({ trains, selected }: IProps) {
+export function TrainSelector(props: IProps) {
+  const { trains, selected } = props
   const router = useRouter()
 
   return (

@@ -22,24 +22,25 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { trainSearchSchema } from "@/types/train-t"
-import type { Train, TrainSearch } from "@/types/train-t"
+import type { ITrain, ITrainSearch } from "@/types/train-t"
 import { statusConfig, calculateDuration } from "@/lib/train-utils"
 import { TrainDetailsDialog } from "@/components/trains/train-details-dialog"
 
 interface IProps {
-  trains: Train[]
+  trains: ITrain[]
   platforms: string[]
 }
 
-const DEFAULT_VALUES: TrainSearch = {
+const DEFAULT_VALUES: ITrainSearch = {
   trainNumber: "",
   platform: "",
   arrivalStation: "",
   status: "all",
 }
 
-export function TrainSearchForm({ trains, platforms }: IProps) {
-  const [results, setResults] = useState<Train[]>([])
+export function TrainSearchForm(props: IProps) {
+  const { trains, platforms } = props
+  const [results, setResults] = useState<ITrain[]>([])
   const [searched, setSearched] = useState(false)
   const [resetKey, setResetKey] = useState(0)
 
@@ -49,12 +50,12 @@ export function TrainSearchForm({ trains, platforms }: IProps) {
     setValue,
     reset,
     formState: { errors },
-  } = useForm<TrainSearch>({
+  } = useForm<ITrainSearch>({
     resolver: zodResolver(trainSearchSchema),
     defaultValues: DEFAULT_VALUES,
   })
 
-  function onSubmit(data: TrainSearch) {
+  function onSubmit(data: ITrainSearch) {
     const filtered = trains.filter((train) => {
       const matchesNumber =
         !data.trainNumber ||
@@ -130,7 +131,7 @@ export function TrainSearchForm({ trains, platforms }: IProps) {
               key={`status-${resetKey}`}
               defaultValue="all"
               onValueChange={(value: string) =>
-                setValue("status", value as TrainSearch["status"])
+                setValue("status", value as ITrainSearch["status"])
               }
             >
               <SelectTrigger>

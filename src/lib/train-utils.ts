@@ -1,4 +1,4 @@
-import type { Train } from "@/types/train-t"
+import type { ITrain } from "@/types/train-t"
 
 export const statusConfig = {
   "on-time": { label: "On Time", className: "bg-green-500/20 text-green-400 border-green-500/30" },
@@ -16,20 +16,20 @@ export function calculateDuration(startTime: string, endTime: string): string {
   return `${hours}h ${minutes}m`
 }
 
-export function getUniquePlatforms(trains: Train[]): string[] {
+export function getUniquePlatforms(trains: ITrain[]): string[] {
   return Array.from(new Set(trains.map((t) => t.platform))).sort(
     (a, b) => parseInt(a) - parseInt(b)
   )
 }
 
-export function getUniqueDestinations(trains: Train[]): string[] {
+export function getUniqueDestinations(trains: ITrain[]): string[] {
   return Array.from(new Set(trains.map((t) => t.arrivalStation))).sort()
 }
 
-export function sortByDepartureTime(trains: Train[]): Train[] {
+export function sortByDepartureTime(trains: ITrain[]): ITrain[] {
   return [...trains].sort((a, b) => a.departureTime.localeCompare(b.departureTime))
 }
 
-export function sortByTrainNumber(trains: Train[]): Train[] {
+export function sortByTrainNumber(trains: ITrain[]): ITrain[] {
   return [...trains].sort((a, b) => a.trainNumber.localeCompare(b.trainNumber))
 }

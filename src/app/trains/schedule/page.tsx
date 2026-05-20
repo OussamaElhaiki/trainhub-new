@@ -1,15 +1,17 @@
 import { TrainSelector } from "@/components/trains/train-selector"
-import { mockTrains } from "@/data/trains"
+import { getTrains } from "@/lib/train-db"
 import { statusConfig, calculateDuration } from "@/lib/train-utils"
 
 interface IProps {
   searchParams: Promise<{ train?: string }>
 }
 
-export default async function TrainSchedulePage({ searchParams }: IProps) {
+export default async function TrainSchedulePage(props: IProps) {
+  const { searchParams } = props
   const { train: trainNumber } = await searchParams
+  const trains = await getTrains()
   const found = trainNumber
-    ? mockTrains.find((t) => t.trainNumber === trainNumber)
+    ? trains.find((t) => t.trainNumber === trainNumber)
     : null
 
   return (
@@ -21,7 +23,7 @@ export default async function TrainSchedulePage({ searchParams }: IProps) {
         </p>
       </div>
 
-      <TrainSelector trains={mockTrains} selected={trainNumber ?? ""} />
+      <TrainSelector trains={trains} selected={trainNumber ?? ""} />
 
       {trainNumber && !found && (
         <p className="text-sm text-destructive">

@@ -6,7 +6,10 @@ export function Header() {
   return (
     <header className="bg-background border-b border-border w-full">
       <div className="flex items-center w-full px-6 py-3">
-        <Link href="/" className="flex items-center gap-3 no-underline shrink-0 visited:!text-inherit">
+        <Link
+          href="/"
+          className="flex items-center gap-3 no-underline shrink-0 visited:!text-inherit"
+        >
           <Image
             src="/logo.svg"
             alt="TrainHub logo"

@@ -9,14 +9,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import type { Train } from "@/types/train-t"
+import type { ITrain } from "@/types/train-t"
 import { calculateDuration, statusConfig } from "@/lib/train-utils"
 
 interface IProps {
-  train: Train
+  train: ITrain
 }
 
-export function TrainDetailsDialog({ train }: IProps) {
+export function TrainDetailsDialog(props: IProps) {
+  const { train } = props
   const [open, setOpen] = useState(false)
   const status = statusConfig[train.status]
 

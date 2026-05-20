@@ -1,7 +1,9 @@
 export function Footer() {
   return (
-    <footer className="mt-5 p-1 bg-black text-white text-sm text-center">
-      Copyright &copy; Oussama
+    <footer className="border-t border-border mt-auto py-6">
+      <p className="text-center text-sm text-muted-foreground">
+        &copy; {new Date().getFullYear()} Oussama Elhaiki. All rights reserved.
+      </p>
     </footer>
   )
 }
