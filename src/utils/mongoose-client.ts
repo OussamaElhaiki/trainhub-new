@@ -3,14 +3,14 @@ import mongoose from "mongoose"
 const MONGO_URI = process.env.MONGO_URI!
 const MONGO_DB = process.env.MONGO_DB!
 
-type MongooseCache = {
+type IMongooseCache = {
   conn?: typeof mongoose
   promise?: Promise<typeof mongoose>
 }
 
 declare global {
   // eslint-disable-next-line no-var
-  var __mongooseCache: MongooseCache | undefined
+  var __mongooseCache: IMongooseCache | undefined
 }
 
 const cache = globalThis.__mongooseCache ?? (globalThis.__mongooseCache = {})
@@ -28,7 +28,7 @@ export async function connectMongoose() {
 
     cache.promise = mongoose.connect(connectionString, {
       bufferCommands: false,
-      dbName: MONGO_DB
+      dbName: MONGO_DB,
     })
   }
 

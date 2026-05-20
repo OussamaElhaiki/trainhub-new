@@ -1,23 +1,16 @@
-import mongoose, { type Model } from "mongoose"
-import type { ITrain } from "@/types/train-t"
+import mongoose from "mongoose"
 
-const trainSchema = new mongoose.Schema<ITrain>(
+type ITrainDocument = {
+  trainNumber: string
+}
+
+const trainSchema = new mongoose.Schema<ITrainDocument>(
   {
-    trainNumber: { type: String, required: true },
-    departureTime: { type: String, required: true },
-    platform: { type: String, required: true },
-    carriages: { type: Number, required: true },
-    seats: { type: Number, required: true },
-    arrivalStation: { type: String, required: true },
-    arrivalTime: { type: String, required: true },
-    status: {
-      type: String,
-      enum: ["on-time", "delayed", "cancelled"],
-      default: "on-time",
-    },
+    trainNumber: { type: String, required: true, unique: true },
   },
   { timestamps: true }
 )
 
-export const TrainModel: Model<ITrain> =
-  mongoose.models.Train ?? mongoose.model<ITrain>("Train", trainSchema)
+export const TrainModel: mongoose.Model<ITrainDocument> =
+  (mongoose.models.Train as mongoose.Model<ITrainDocument>) ??
+  mongoose.model<ITrainDocument>("Train", trainSchema)

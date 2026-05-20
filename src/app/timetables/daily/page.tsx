@@ -1,8 +1,5 @@
+import { PlaceholderPage } from "@/components/placeholder-page"
+
 export default function DailySchedulesPage() {
-  return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold">Daily Schedules</h1>
-      <p className="text-gray-600">Content coming soon.</p>
-    </div>
-  )
+  return <PlaceholderPage title="Daily Schedules" />
 }

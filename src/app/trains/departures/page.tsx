@@ -1,62 +1,8 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import { getTrains } from "@/lib/train-db"
-import { statusConfig } from "@/lib/train-utils"
+import { getApi } from "@/utils/server-api"
+import { DepartureScheduleView } from "@/components/trains/departure-schedule-view"
+import type { ISchedule } from "@/types/schedule-t"
 
 export default async function DepartureSchedulePage() {
-  const trains = await getTrains()
-
-  return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Departure Schedule</h1>
-        <p className="mt-1 text-muted-foreground">
-          All trains departing from Vilnius, sorted by departure time.
-        </p>
-      </div>
-
-      <div className="rounded-lg border border-border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Time</TableHead>
-              <TableHead>Train</TableHead>
-              <TableHead>Destination</TableHead>
-              <TableHead>Platform</TableHead>
-              <TableHead>Status</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {trains.map((train) => {
-              const status = statusConfig[train.status]
-              return (
-                <TableRow
-                  key={train.id}
-                  className={train.status === "cancelled" ? "opacity-70" : ""}
-                >
-                  <TableCell className="font-mono text-lg font-semibold">
-                    {train.departureTime}
-                  </TableCell>
-                  <TableCell className="font-medium">{train.trainNumber}</TableCell>
-                  <TableCell>{train.arrivalStation}</TableCell>
-                  <TableCell>{train.platform}</TableCell>
-                  <TableCell>
-                    <span className={`rounded-full border px-2 py-0.5 text-xs font-semibold ${status.className}`}>
-                      {status.label}
-                    </span>
-                  </TableCell>
-                </TableRow>
-              )
-            })}
-          </TableBody>
-        </Table>
-      </div>
-    </div>
-  )
+  const schedules = await getApi<ISchedule[]>("/api/schedules") ?? []
+  return <DepartureScheduleView schedules={schedules} />
 }

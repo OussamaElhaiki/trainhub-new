@@ -4,10 +4,10 @@ import type { NextRequest } from "next/server"
 export async function GET(request: NextRequest) {
   try {
     await connectMongoose()
-    return Response.json({ success: true, message: "Connected to MongoDB" })
+    return Response.json({ connected: true })
   } catch (error) {
     return Response.json(
-      { success: false, error: error instanceof Error ? error.message : "Unknown error" },
+      { connected: false, error: error instanceof Error ? error.message : "Unknown error" },
       { status: 500 }
     )
   }

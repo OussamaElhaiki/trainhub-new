@@ -4,7 +4,7 @@ import { Nav } from "./nav"
 
 export function Header() {
   return (
-    <header className="bg-background border-b border-border w-full">
+    <header className="bg-background/30 backdrop-blur-md border-b border-border w-full relative z-50">
       <div className="flex items-center w-full px-6 py-3">
         <Link
           href="/"

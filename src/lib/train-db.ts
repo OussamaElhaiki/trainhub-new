@@ -1,21 +1,31 @@
 import { connectMongoose } from "@/utils/mongoose-client"
 import { TrainModel } from "@/models/train"
-import { sortByDepartureTime } from "@/lib/train-utils"
-import type { ITrain } from "@/types/train-t"
+import type { ITrain, ITrainForm } from "@/types/train-t"
 
 export async function getTrains(): Promise<ITrain[]> {
   await connectMongoose()
-  const docs = await TrainModel.find().lean()
-  const trains: ITrain[] = docs.map((doc) => ({
+  const docs = await TrainModel.find().sort({ trainNumber: 1 }).lean()
+  return docs.map((doc) => ({
     id: String(doc._id),
     trainNumber: doc.trainNumber,
-    departureTime: doc.departureTime,
-    platform: doc.platform,
-    carriages: doc.carriages,
-    seats: doc.seats,
-    arrivalStation: doc.arrivalStation,
-    arrivalTime: doc.arrivalTime,
-    status: doc.status,
   }))
-  return sortByDepartureTime(trains)
+}
+
+export async function createTrain(data: ITrainForm): Promise<ITrain> {
+  await connectMongoose()
+  const doc = await TrainModel.create(data)
+  return { id: String(doc._id), trainNumber: doc.trainNumber }
+}
+
+export async function updateTrain(id: string, data: ITrainForm): Promise<ITrain | null> {
+  await connectMongoose()
+  const doc = await TrainModel.findByIdAndUpdate(id, data, { new: true }).lean()
+  if (!doc) return null
+  return { id: String(doc._id), trainNumber: doc.trainNumber }
+}
+
+export async function deleteTrain(id: string): Promise<boolean> {
+  await connectMongoose()
+  const result = await TrainModel.findByIdAndDelete(id)
+  return !!result
 }
