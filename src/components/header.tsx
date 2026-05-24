@@ -18,8 +18,8 @@ export function Header() {
             className="h-12 w-auto"
             priority
           />
-          <span className="text-2xl font-bold text-white tracking-tight">
-            TrainHub
+          <span className="text-2xl font-bold tracking-tight">
+            <span className="text-white">Train</span><span className="text-primary">Hub</span>
           </span>
         </Link>
         <Nav />

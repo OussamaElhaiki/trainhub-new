@@ -1,5 +1,7 @@
-import { PlaceholderPage } from "@/components/placeholder-page"
+import { getSchedules } from "@/lib/schedule-db"
+import { StationDeparturesView } from "@/components/stations/station-departures-view"
 
-export default function DeparturesPage() {
-  return <PlaceholderPage title="Departures" />
+export default async function StationDeparturesPage() {
+  const schedules = await getSchedules()
+  return <StationDeparturesView schedules={schedules} />
 }

@@ -1,5 +1,7 @@
-import { PlaceholderPage } from "@/components/placeholder-page"
+import { getStations } from "@/lib/station-db"
+import { AllStationsView } from "@/components/stations/all-stations-view"
 
-export default function AllStationsPage() {
-  return <PlaceholderPage title="All Stations" />
+export default async function AllStationsPage() {
+  const stations = await getStations()
+  return <AllStationsView stations={stations} />
 }
