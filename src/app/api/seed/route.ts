@@ -1,5 +1,5 @@
 import { connectMongoose } from "@/utils/mongoose-client"
-import { TrainModel } from "@/models/train"
+import { TrainModel } from "@/models/train-model"
 
 export async function GET() {
   await connectMongoose()

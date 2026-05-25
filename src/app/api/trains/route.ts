@@ -1,7 +1,5 @@
 import { getTrains, createTrain } from "@/lib/train-db"
 import { trainFormSchema } from "@/types/train-t"
-import { TrainModel } from "@/models/train"
-import { connectMongoose } from "@/utils/mongoose-client"
 
 export async function GET() {
   const trains = await getTrains()
@@ -14,11 +12,9 @@ export async function POST(request: Request) {
   if (!result.success) {
     return Response.json({ error: result.error.flatten() }, { status: 400 })
   }
-  await connectMongoose()
-  const existing = await TrainModel.findOne({ trainNumber: result.data.trainNumber })
-  if (existing) {
+  const train = await createTrain(result.data)
+  if (train === "duplicate") {
     return Response.json({ error: "duplicate" }, { status: 409 })
   }
-  const train = await createTrain(result.data)
   return Response.json(train, { status: 201 })
 }

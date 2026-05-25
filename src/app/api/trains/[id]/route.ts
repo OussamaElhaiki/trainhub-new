@@ -1,7 +1,5 @@
 import { updateTrain, deleteTrain } from "@/lib/train-db"
 import { trainFormSchema } from "@/types/train-t"
-import { TrainModel } from "@/models/train"
-import { connectMongoose } from "@/utils/mongoose-client"
 
 interface IParams {
   params: Promise<{ id: string }>
@@ -15,15 +13,8 @@ export async function PUT(request: Request, props: IParams) {
   if (!result.success) {
     return Response.json({ error: result.error.flatten() }, { status: 400 })
   }
-  await connectMongoose()
-  const existing = await TrainModel.findOne({
-    trainNumber: result.data.trainNumber,
-    _id: { $ne: id },
-  })
-  if (existing) {
-    return Response.json({ error: "duplicate" }, { status: 409 })
-  }
   const train = await updateTrain(id, result.data)
+  if (train === "duplicate") return Response.json({ error: "duplicate" }, { status: 409 })
   if (!train) return Response.json({ error: "not_found" }, { status: 404 })
   return Response.json(train)
 }

@@ -11,6 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { statusConfig } from "@/lib/train-utils"
 import type { ISchedule } from "@/types/schedule-t"
 
 interface IProps {
@@ -19,20 +20,6 @@ interface IProps {
   scheduleCount: number
   schedules: ISchedule[]
 }
-
-const statusStyle = {
-  "on-time": "border-green-500/30 bg-green-500/10 text-green-400",
-  delayed: "border-yellow-500/30 bg-yellow-500/10 text-yellow-400",
-  cancelled: "border-red-500/30 bg-red-500/10 text-red-400",
-  archived: "border-gray-500/30 bg-gray-500/10 text-gray-400",
-} as const
-
-const statusLabel = {
-  "on-time": "On Time",
-  delayed: "Delayed",
-  cancelled: "Cancelled",
-  archived: "Archived",
-} as const
 
 export function HomeView(props: IProps) {
   const { trainCount, stationCount, scheduleCount, schedules } = props
@@ -133,8 +120,8 @@ export function HomeView(props: IProps) {
                     <TableCell className="px-5 py-3 text-sm font-medium">{row.arrivalStation}</TableCell>
                     <TableCell className="px-5 py-3 text-xs text-muted-foreground text-center">{row.platform}</TableCell>
                     <TableCell className="px-5 py-3 text-right">
-                      <Badge variant="outline" className={`text-xs ${statusStyle[row.status]}`}>
-                        {statusLabel[row.status]}
+                      <Badge variant="outline" className={`text-xs ${statusConfig[row.status].className}`}>
+                        {statusConfig[row.status].label}
                       </Badge>
                     </TableCell>
                   </TableRow>

@@ -9,8 +9,7 @@ type IMongooseCache = {
 }
 
 declare global {
-  // eslint-disable-next-line no-var
-  var __mongooseCache: IMongooseCache | undefined
+    var __mongooseCache: IMongooseCache | undefined
 }
 
 const cache = globalThis.__mongooseCache ?? (globalThis.__mongooseCache = {})

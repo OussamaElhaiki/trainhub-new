@@ -24,5 +24,6 @@ export const putApi = async (url: string, body: object) => {
 }
 
 export const deleteApi = async (url: string, id: string) => {
-  return await postApi(`${url}/${id}`, { id }, "DELETE")
+  const response = await fetch(`${SITE}${url}/${id}`, { method: "DELETE" })
+  return await response.json()
 }

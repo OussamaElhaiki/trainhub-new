@@ -1,9 +1,8 @@
 import { model, models, Schema, Model, Types } from "mongoose"
 import type { WithStringId } from "@/models/model-t"
+import type { ITrainForm } from "@/types/train-t"
 
-interface ITrainDoc {
-  trainNumber: string
-}
+type ITrainDoc = ITrainForm
 
 type IReturnType = WithStringId<ITrainDoc>
 

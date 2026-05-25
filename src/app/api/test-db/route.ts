@@ -1,7 +1,6 @@
 import { connectMongoose } from "@/utils/mongoose-client"
-import type { NextRequest } from "next/server"
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     await connectMongoose()
     return Response.json({ connected: true })

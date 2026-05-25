@@ -1,17 +1,8 @@
 import { model, models, Schema, Model, Types } from "mongoose"
 import type { WithStringId } from "@/models/model-t"
+import type { IScheduleForm } from "@/types/schedule-t"
 
-interface IScheduleDoc {
-  trainNumber: string
-  departureTime: string
-  platform: string
-  carriages: number
-  seats: number
-  arrivalStation: string
-  arrivalTime: string
-  arrivalDepartureTime: string
-  status: "on-time" | "delayed" | "cancelled" | "archived"
-}
+type IScheduleDoc = IScheduleForm
 
 type IReturnType = WithStringId<IScheduleDoc>
 
