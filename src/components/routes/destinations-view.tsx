@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { ArrowRightIcon, MapPinIcon } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
-import { calculateDuration } from "@/lib/train-utils"
+import { buildDestinationSummaries } from "@/lib/train-utils"
 import type { ISchedule } from "@/types/schedule-t"
 
 interface IProps {
@@ -11,25 +11,7 @@ interface IProps {
 export function DestinationsView(props: IProps) {
   const { schedules } = props
 
-  const active = schedules.filter((s) => s.status !== "archived")
-
-  const map = new Map<string, ISchedule[]>()
-  for (const s of active) {
-    map.set(s.arrivalStation, [...(map.get(s.arrivalStation) ?? []), s])
-  }
-
-  const destinations = [...map.entries()]
-    .map(([name, items]) => {
-      const sorted = [...items].sort((a, b) => a.departureTime.localeCompare(b.departureTime))
-      const next = sorted[0]!
-      return {
-        name,
-        count: items.length,
-        nextDep: next.departureTime.slice(11, 16),
-        duration: calculateDuration(next.departureTime, next.arrivalTime),
-      }
-    })
-    .sort((a, b) => a.name.localeCompare(b.name))
+  const destinations = buildDestinationSummaries(schedules)
 
   return (
     <div className="space-y-6">

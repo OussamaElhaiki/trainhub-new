@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { calculateDuration } from "@/lib/train-utils"
+import { buildRouteGroups } from "@/lib/train-utils"
 import type { ISchedule } from "@/types/schedule-t"
 
 interface IProps {
@@ -19,27 +19,7 @@ interface IProps {
 export function RouteListView(props: IProps) {
   const { schedules } = props
 
-  const active = schedules.filter((s) => s.status !== "archived")
-
-  const map = new Map<string, ISchedule[]>()
-  for (const s of active) {
-    map.set(s.arrivalStation, [...(map.get(s.arrivalStation) ?? []), s])
-  }
-
-  const routes = [...map.entries()]
-    .map(([destination, items]) => {
-      const sorted = [...items].sort((a, b) => a.departureTime.localeCompare(b.departureTime))
-      const first = sorted[0]!
-      const last = sorted[sorted.length - 1]!
-      return {
-        destination,
-        count: items.length,
-        firstDep: first.departureTime.slice(11, 16),
-        lastDep: last.departureTime.slice(11, 16),
-        duration: calculateDuration(first.departureTime, first.arrivalTime),
-      }
-    })
-    .sort((a, b) => a.destination.localeCompare(b.destination))
+  const routes = buildRouteGroups(schedules)
 
   return (
     <div className="space-y-6">

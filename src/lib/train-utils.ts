@@ -12,7 +12,6 @@ export function formatDateTime(value: string): string {
 }
 
 function extractTime(value: string): string {
-  // handles both "HH:MM" and "YYYY-MM-DDTHH:MM"
   if (value.includes("T")) return value.split("T")[1] ?? "00:00"
   return value
 }
@@ -46,4 +45,75 @@ export function getUniqueDestinations(schedules: ISchedule[]): string[] {
 
 export function sortByDepartureTime(schedules: ISchedule[]): ISchedule[] {
   return [...schedules].sort((a, b) => a.departureTime.localeCompare(b.departureTime))
+}
+
+export function sortByArrivalTime(schedules: ISchedule[]): ISchedule[] {
+  return [...schedules].sort((a, b) => a.arrivalTime.localeCompare(b.arrivalTime))
+}
+
+export function sortByArrivalDepartureTime(schedules: ISchedule[]): ISchedule[] {
+  return [...schedules].sort((a, b) => a.arrivalDepartureTime.localeCompare(b.arrivalDepartureTime))
+}
+
+export function filterActiveSchedules(schedules: ISchedule[]): ISchedule[] {
+  return schedules.filter((s) => s.status !== "archived")
+}
+
+export type IRouteGroup = {
+  destination: string
+  count: number
+  firstDep: string
+  lastDep: string
+  duration: string
+}
+
+export type IDestinationSummary = {
+  name: string
+  count: number
+  nextDep: string
+  duration: string
+}
+
+function groupByDestination(schedules: ISchedule[]): Map<string, ISchedule[]> {
+  const map = new Map<string, ISchedule[]>()
+  for (const s of schedules) {
+    map.set(s.arrivalStation, [...(map.get(s.arrivalStation) ?? []), s])
+  }
+  return map
+}
+
+export function buildRouteGroups(schedules: ISchedule[]): IRouteGroup[] {
+  const active = filterActiveSchedules(schedules)
+  const map = groupByDestination(active)
+  return [...map.entries()]
+    .map(([destination, items]) => {
+      const sorted = sortByDepartureTime(items)
+      const first = sorted[0]!
+      const last = sorted[sorted.length - 1]!
+      return {
+        destination,
+        count: items.length,
+        firstDep: first.departureTime.slice(11, 16),
+        lastDep: last.departureTime.slice(11, 16),
+        duration: calculateDuration(first.departureTime, first.arrivalTime),
+      }
+    })
+    .sort((a, b) => a.destination.localeCompare(b.destination))
+}
+
+export function buildDestinationSummaries(schedules: ISchedule[]): IDestinationSummary[] {
+  const active = filterActiveSchedules(schedules)
+  const map = groupByDestination(active)
+  return [...map.entries()]
+    .map(([name, items]) => {
+      const sorted = sortByDepartureTime(items)
+      const next = sorted[0]!
+      return {
+        name,
+        count: items.length,
+        nextDep: next.departureTime.slice(11, 16),
+        duration: calculateDuration(next.departureTime, next.arrivalTime),
+      }
+    })
+    .sort((a, b) => a.name.localeCompare(b.name))
 }

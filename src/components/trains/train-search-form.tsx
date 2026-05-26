@@ -1,6 +1,6 @@
 "use client"
 
-import { useRouter } from "next/navigation"
+import { useState } from "react"
 import {
   Select,
   SelectContent,
@@ -28,8 +28,8 @@ interface IProps {
 }
 
 export function TrainSearchForm(props: IProps) {
-  const { trains, schedules, selected } = props
-  const router = useRouter()
+  const { trains, schedules } = props
+  const [selected, setSelected] = useState(props.selected)
 
   const results = selected
     ? schedules.filter((s) => s.trainNumber === selected)
@@ -39,12 +39,7 @@ export function TrainSearchForm(props: IProps) {
     <div className="space-y-6">
       <div className="space-y-1.5">
         <Label>Select train number</Label>
-        <Select
-          value={selected}
-          onValueChange={(value: string) =>
-            router.replace(`/trains/search?train=${value}`)
-          }
-        >
+        <Select value={selected} onValueChange={setSelected}>
           <SelectTrigger className="w-64">
             <SelectValue placeholder="Choose a train" />
           </SelectTrigger>

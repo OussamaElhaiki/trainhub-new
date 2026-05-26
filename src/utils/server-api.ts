@@ -4,8 +4,7 @@ export const getApi = async <T>(url: string, options: RequestInit = {}): Promise
   const response = await fetch(`${SITE}${url}`, options)
   try {
     return await response.json() as T
-  } catch (error) {
-    console.log(error)
+  } catch {
     return undefined
   }
 }

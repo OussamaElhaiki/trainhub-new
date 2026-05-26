@@ -1,6 +1,6 @@
 "use client"
 
-import { useRouter } from "next/navigation"
+import { useState } from "react"
 import { ArrowRightIcon } from "lucide-react"
 import {
   Select,
@@ -18,7 +18,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Label } from "@/components/ui/label"
-import { statusConfig, calculateDuration, formatDateTime } from "@/lib/train-utils"
+import { statusConfig, calculateDuration, formatDateTime, sortByDepartureTime } from "@/lib/train-utils"
 import { TrainDetailsDialog } from "@/components/trains/train-details-dialog"
 import type { ISchedule } from "@/types/schedule-t"
 
@@ -29,14 +29,12 @@ interface IProps {
 }
 
 export function RouteSearchForm(props: IProps) {
-  const { schedules, destinations, selected } = props
-  const router = useRouter()
+  const { schedules, destinations } = props
+  const [selected, setSelected] = useState(props.selected)
 
-  const results = selected
-    ? [...schedules]
-        .filter((s) => s.arrivalStation === selected)
-        .sort((a, b) => a.departureTime.localeCompare(b.departureTime))
-    : []
+  const results = sortByDepartureTime(
+    selected ? schedules.filter((s) => s.arrivalStation === selected) : []
+  )
 
   return (
     <div className="space-y-6">
@@ -45,12 +43,7 @@ export function RouteSearchForm(props: IProps) {
         <div className="flex items-center gap-3 flex-wrap">
           <span className="text-sm font-medium text-muted-foreground">Vilnius</span>
           <ArrowRightIcon className="size-4 text-muted-foreground" />
-          <Select
-            value={selected}
-            onValueChange={(value: string) =>
-              router.replace(`/routes/search?destination=${encodeURIComponent(value)}`)
-            }
-          >
+          <Select value={selected} onValueChange={setSelected}>
             <SelectTrigger className="w-64">
               <SelectValue placeholder="Choose a destination" />
             </SelectTrigger>

@@ -1,8 +1,7 @@
-import { getApi } from "@/utils/server-api"
+import { getTrains } from "@/lib/train-db"
 import { AllTrainsView } from "@/components/trains/all-trains-view"
-import type { ITrain } from "@/types/train-t"
 
 export default async function AllTrainsPage() {
-  const trains = await getApi<ITrain[]>("/api/trains") ?? []
+  const trains = await getTrains()
   return <AllTrainsView trains={trains} />
 }

@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
-import { statusConfig, formatDateTime, calculateDuration } from "@/lib/train-utils"
+import { statusConfig, formatDateTime, calculateDuration, sortByArrivalTime } from "@/lib/train-utils"
 import { TrainDetailsDialog } from "@/components/trains/train-details-dialog"
 import type { ISchedule } from "@/types/schedule-t"
 
@@ -34,7 +34,7 @@ export function StationArrivalsPanel(props: IProps) {
     ? schedules.filter((s) => s.arrivalStation === selectedStation)
     : schedules
 
-  const sorted = [...filtered].sort((a, b) => a.arrivalTime.localeCompare(b.arrivalTime))
+  const sorted = sortByArrivalTime(filtered)
 
   return (
     <div className="space-y-4">

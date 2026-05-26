@@ -1,18 +1,13 @@
-import { getApi } from "@/utils/server-api"
+import { getTrains } from "@/lib/train-db"
+import { getSchedules } from "@/lib/schedule-db"
 import { TrainSearchView } from "@/components/trains/train-search-view"
-import type { ITrain } from "@/types/train-t"
-import type { ISchedule } from "@/types/schedule-t"
 
 interface IProps {
   searchParams: Promise<{ train?: string }>
 }
 
 export default async function TrainSearchPage(props: IProps) {
-  const { searchParams } = props
-  const { train: trainNumber } = await searchParams
-  const [trains, schedules] = await Promise.all([
-    getApi<ITrain[]>("/api/trains"),
-    getApi<ISchedule[]>("/api/schedules"),
-  ])
-  return <TrainSearchView trains={trains ?? []} schedules={schedules ?? []} selected={trainNumber ?? ""} />
+  const { train: trainNumber = "" } = await props.searchParams
+  const [trains, schedules] = await Promise.all([getTrains(), getSchedules()])
+  return <TrainSearchView trains={trains} schedules={schedules} selected={trainNumber} />
 }

@@ -1,14 +1,14 @@
 import { postApi, putApi } from "@/utils/server-api"
 
-interface IOptions {
+interface IOptions<T> {
   endpoint: string
   id?: string
   errorCodes: Record<string, string>
-  onSuccess: (json: unknown) => void
+  onSuccess: (json: T) => void
   setServerError: (msg: string | null) => void
 }
 
-export function useCrud(options: IOptions) {
+export function useCrud<T>(options: IOptions<T>) {
   const { endpoint, id, errorCodes, onSuccess, setServerError } = options
   const isEdit = !!id
 
@@ -23,7 +23,7 @@ export function useCrud(options: IOptions) {
       return
     }
 
-    onSuccess(json)
+    onSuccess(json as T)
   }
 
   return { submit, isEdit }

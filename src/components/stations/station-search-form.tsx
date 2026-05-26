@@ -1,6 +1,6 @@
 "use client"
 
-import { useRouter } from "next/navigation"
+import { useState } from "react"
 import {
   Select,
   SelectContent,
@@ -17,7 +17,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Label } from "@/components/ui/label"
-import { statusConfig, calculateDuration, formatDateTime } from "@/lib/train-utils"
+import { statusConfig, calculateDuration, formatDateTime, sortByDepartureTime } from "@/lib/train-utils"
 import { TrainDetailsDialog } from "@/components/trains/train-details-dialog"
 import type { ISchedule } from "@/types/schedule-t"
 import type { IStation } from "@/types/station-t"
@@ -29,25 +29,20 @@ interface IProps {
 }
 
 export function StationSearchForm(props: IProps) {
-  const { stations, schedules, selected } = props
-  const router = useRouter()
+  const { stations, schedules } = props
+  const [selected, setSelected] = useState(props.selected)
 
   const results = selected
     ? schedules.filter((s) => s.arrivalStation === selected)
     : []
 
-  const sorted = [...results].sort((a, b) => a.departureTime.localeCompare(b.departureTime))
+  const sorted = sortByDepartureTime(results)
 
   return (
     <div className="space-y-6">
       <div className="space-y-1.5">
         <Label>Select station</Label>
-        <Select
-          value={selected}
-          onValueChange={(value: string) =>
-            router.replace(`/stations/search?station=${encodeURIComponent(value)}`)
-          }
-        >
+        <Select value={selected} onValueChange={setSelected}>
           <SelectTrigger className="w-64">
             <SelectValue placeholder="Choose a station" />
           </SelectTrigger>

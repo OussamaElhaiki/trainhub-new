@@ -1,6 +1,6 @@
 "use client"
 
-import { useRouter } from "next/navigation"
+import { useState } from "react"
 import {
   Select,
   SelectContent,
@@ -15,16 +15,11 @@ interface IProps {
 }
 
 export function TrainSelector(props: IProps) {
-  const { trains, selected } = props
-  const router = useRouter()
+  const { trains } = props
+  const [selected, setSelected] = useState(props.selected)
 
   return (
-    <Select
-      value={selected}
-      onValueChange={(value: string) =>
-        router.replace(`/trains/schedule?train=${value}`)
-      }
-    >
+    <Select value={selected} onValueChange={setSelected}>
       <SelectTrigger className="w-64">
         <SelectValue placeholder="Select a train number" />
       </SelectTrigger>
