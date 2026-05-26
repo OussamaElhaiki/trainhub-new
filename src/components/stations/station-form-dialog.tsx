@@ -1,9 +1,8 @@
 "use client"
-
-import { useState } from "react"
+import { useDialogForm } from "@/hooks/use-dialog-form"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { postApi, putApi } from "@/utils/server-api"
+import { useCrud } from "@/hooks/use-crud"
 import { PlusIcon, PencilIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -26,10 +25,6 @@ interface IProps {
 
 export function StationFormDialog(props: IProps) {
   const { station, onSuccess, trigger } = props
-  const [open, setOpen] = useState(false)
-  const [serverError, setServerError] = useState<string | null>(null)
-  const isEdit = !!station
-
   const {
     register,
     handleSubmit,
@@ -40,34 +35,23 @@ export function StationFormDialog(props: IProps) {
     defaultValues: { name: station?.name ?? "" },
     mode: "onTouched",
   })
+  const { open, serverError, setServerError, handleOpenChange } = useDialogForm(
+    () => reset({ name: station?.name ?? "" })
+  )
 
-  function handleOpenChange(value: boolean) {
-    setOpen(value)
-    if (!value) {
-      reset({ name: station?.name ?? "" })
-      setServerError(null)
-    }
-  }
-
-  async function onSubmit(data: IStationForm) {
-    setServerError(null)
-    const json = isEdit
-      ? await putApi(`/api/stations/${station.id}`, data)
-      : await postApi("/api/stations", data)
-
-    if (json?.error) {
-      const codes: Record<string, string> = {
-        duplicate: "A station with this name already exists",
-        not_found: "Station not found",
-      }
-      setServerError(codes[json.error] ?? "Something went wrong")
-      return
-    }
-
-    setOpen(false)
-    reset()
-    onSuccess?.(json as IStation)
-  }
+  const { submit, isEdit } = useCrud({
+    endpoint: "/api/stations",
+    id: station?.id,
+    errorCodes: {
+      duplicate: "A station with this name already exists",
+      not_found: "Station not found",
+    },
+    onSuccess: (json) => {
+      handleOpenChange(false)
+      onSuccess?.(json as IStation)
+    },
+    setServerError,
+  })
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -83,7 +67,7 @@ export function StationFormDialog(props: IProps) {
           <DialogTitle>{isEdit ? "Edit Station" : "Add Station"}</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 pt-1">
+        <form onSubmit={handleSubmit(submit)} className="space-y-4 pt-1">
           <div className="space-y-1.5">
             <Label htmlFor="name">Station name</Label>
             <Input

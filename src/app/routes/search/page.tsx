@@ -1,5 +1,14 @@
-import { PlaceholderPage } from "@/components/placeholder-page"
+import { getSchedules } from "@/lib/schedule-db"
+import { getUniqueDestinations } from "@/lib/train-utils"
+import { RouteSearchView } from "@/components/routes/route-search-view"
 
-export default function RouteSearchPage() {
-  return <PlaceholderPage title="Route Search" />
+interface IProps {
+  searchParams: Promise<{ destination?: string }>
+}
+
+export default async function RouteSearchPage(props: IProps) {
+  const { destination = "" } = await props.searchParams
+  const schedules = await getSchedules()
+  const destinations = getUniqueDestinations(schedules)
+  return <RouteSearchView schedules={schedules} destinations={destinations} selected={destination} />
 }

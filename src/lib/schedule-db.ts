@@ -26,3 +26,8 @@ export async function deleteSchedule(id: string): Promise<boolean> {
   const result = await ScheduleModel.findByIdAndDelete(id)
   return !!result
 }
+
+export async function countSchedules(): Promise<number> {
+  await connectMongoose()
+  return ScheduleModel.countDocuments()
+}

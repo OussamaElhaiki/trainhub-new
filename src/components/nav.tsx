@@ -14,21 +14,31 @@ import type { INav } from "@/types/nav-t"
 
 interface IProps {
   menu?: INav[]
+  role?: string
 }
 
 export function Nav(props: IProps) {
-  const { menu = mainMenu } = props
+  const { menu = mainMenu, role } = props
+
+  const filtered = menu
+    .map((item) => ({
+      ...item,
+      children: item.children?.filter(
+        (child) => !child.role || child.role === role
+      ),
+    }))
+    .filter((item) => item.slug === "/" || (item.children && item.children.length > 0))
 
   return (
     <NavigationMenu viewport={false} className="ml-auto">
       <NavigationMenuList>
-        {menu.map((item, index) =>
+        {filtered.map((item, index) =>
           item.children && item.children.length > 0 ? (
             <NavigationMenuItem key={item.slug}>
               <NavigationMenuTrigger className="bg-transparent text-white hover:bg-primary hover:text-white focus:bg-transparent data-open:bg-primary data-open:text-white">
                 {item.title}
               </NavigationMenuTrigger>
-              <NavigationMenuContent className={`min-w-[180px] !bg-card !shadow-xl !ring-primary/20 ${index === menu.length - 1 ? "right-0 left-auto" : ""}`}>
+              <NavigationMenuContent className={`min-w-[180px] !bg-card !shadow-xl !ring-primary/20 ${index === filtered.length - 1 ? "right-0 left-auto" : ""}`}>
                 {item.children.map((child) => (
                   <NavigationMenuLink key={child.slug} asChild>
                     <Link

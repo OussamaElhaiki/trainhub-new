@@ -1,10 +1,9 @@
 "use client"
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useDialogForm } from "@/hooks/use-dialog-form"
 import { useForm } from "react-hook-form"
+import { useCrud } from "@/hooks/use-crud"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { postApi, putApi } from "@/utils/server-api"
 import { PlusIcon, PencilIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -21,16 +20,12 @@ import type { ITrain, ITrainForm } from "@/types/train-t"
 
 interface IProps {
   train?: ITrain
+  onSuccess?: (train: ITrain) => void
   trigger?: React.ReactNode
 }
 
 export function TrainFormDialog(props: IProps) {
-  const { train, trigger } = props
-  const router = useRouter()
-  const [open, setOpen] = useState(false)
-  const [serverError, setServerError] = useState<string | null>(null)
-  const isEdit = !!train
-
+  const { train, onSuccess, trigger } = props
   const {
     register,
     handleSubmit,
@@ -40,35 +35,24 @@ export function TrainFormDialog(props: IProps) {
     resolver: zodResolver(trainFormSchema),
     defaultValues: { trainNumber: train?.trainNumber ?? "" },
   })
+  const { open, serverError, setServerError, handleOpenChange } = useDialogForm(
+  () => reset({ trainNumber: train?.trainNumber ?? "" })
+)
+  
+  const { submit, isEdit } = useCrud({
+  endpoint: "/api/trains",
+  id: train?.id,
+  errorCodes: {
+    duplicate: "This train number already exists",
+    not_found: "Train not found",
+  },
+  onSuccess: (json) => { handleOpenChange(false); onSuccess?.(json as ITrain) },
+  setServerError,
+})
+  
+  
 
-  function handleOpenChange(value: boolean) {
-    setOpen(value)
-    if (!value) {
-      reset({ trainNumber: train?.trainNumber ?? "" })
-      setServerError(null)
-    }
-  }
-
-  async function onSubmit(data: ITrainForm) {
-    setServerError(null)
-    const json = isEdit
-      ? await putApi(`/api/trains/${train.id}`, data)
-      : await postApi("/api/trains", data)
-
-    if (json?.error) {
-      const codes: Record<string, string> = {
-        duplicate: "This train number already exists",
-        not_found: "Train not found",
-      }
-      setServerError(codes[json.error] ?? "Something went wrong")
-      return
-    }
-
-    setOpen(false)
-    reset()
-    router.refresh()
-  }
-
+  
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
@@ -83,7 +67,7 @@ export function TrainFormDialog(props: IProps) {
           <DialogTitle>{isEdit ? "Edit Train" : "Add Train"}</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 pt-1">
+        <form onSubmit={handleSubmit(submit)} className="space-y-4 pt-1">
           <div className="space-y-1.5">
             <Label htmlFor="trainNumber">Train number</Label>
             <Input

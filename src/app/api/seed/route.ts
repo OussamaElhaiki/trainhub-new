@@ -1,8 +1,6 @@
-import { connectMongoose } from "@/utils/mongoose-client"
-import { TrainModel } from "@/models/train-model"
+import { getTrains } from "@/lib/train-db"
 
 export async function GET() {
-  await connectMongoose()
-  const count = await TrainModel.countDocuments()
-  return Response.json({ count })
+  const trains = await getTrains()
+  return Response.json({ count: trains.length })
 }

@@ -1,14 +1,13 @@
 "use client"
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { FormField } from "@/components/ui/form-field"
+import { useDialogForm } from "@/hooks/use-dialog-form"
 import { useForm, Controller } from "react-hook-form"
+import { useCrud } from "@/hooks/use-crud"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { postApi, putApi } from "@/utils/server-api"
 import { PlusIcon, PencilIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import {
   Select,
   SelectContent,
@@ -26,12 +25,15 @@ import {
 import { scheduleFormSchema } from "@/types/schedule-t"
 import type { ISchedule, IScheduleForm } from "@/types/schedule-t"
 import type { ITrain } from "@/types/train-t"
-import { STATIONS, PLATFORMS, CARRIAGES_OPTIONS } from "@/lib/constants"
+import { PLATFORMS, CARRIAGES_OPTIONS } from "@/lib/constants"
+import type { IStation } from "@/types/station-t"
 import { DateTimePicker } from "@/components/ui/datetime-picker"
 
 interface IProps {
   schedule?: ISchedule
   trains: ITrain[]
+  stations: IStation[]
+  onSuccess?: (schedule: ISchedule) => void
   trigger?: React.ReactNode
 }
 
@@ -48,11 +50,7 @@ const DEFAULT_VALUES = {
 }
 
 export function ScheduleFormDialog(props: IProps) {
-  const { schedule, trains, trigger } = props
-  const router = useRouter()
-  const [open, setOpen] = useState(false)
-  const [serverError, setServerError] = useState<string | null>(null)
-  const isEdit = !!schedule
+  const { schedule, trains, stations, onSuccess, trigger } = props
 
   const initial: IScheduleForm = schedule
     ? {
@@ -79,31 +77,17 @@ export function ScheduleFormDialog(props: IProps) {
     defaultValues: initial,
   })
 
-  function handleOpenChange(value: boolean) {
-    setOpen(value)
-    if (!value) {
-      reset(initial)
-      setServerError(null)
-    }
-  }
+  const { open, serverError, setServerError, handleOpenChange } = useDialogForm(
+    () => reset(initial)
+  )
 
-  async function onSubmit(data: IScheduleForm) {
-    setServerError(null)
-    const json = isEdit
-      ? await putApi(`/api/schedules/${schedule.id}`, data)
-      : await postApi("/api/schedules", data)
-
-    if (json?.error) {
-      const codes: Record<string, string> = {
-        not_found: "Schedule not found",
-      }
-      setServerError(codes[json.error] ?? "Something went wrong")
-      return
-    }
-
-    setOpen(false)
-    router.refresh()
-  }
+  const { submit, isEdit } = useCrud({
+    endpoint: "/api/schedules",
+    id: schedule?.id,
+    errorCodes: { not_found: "Schedule not found" },
+    onSuccess: (json) => { handleOpenChange(false); onSuccess?.(json as ISchedule) },
+    setServerError,
+  })
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -119,209 +103,100 @@ export function ScheduleFormDialog(props: IProps) {
           <DialogTitle>{isEdit ? "Edit Schedule" : "Add Schedule"}</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 pt-1">
-          {/* Train Number */}
-          <div className="space-y-1.5">
-            <Label>Train number</Label>
-            <Controller
-              name="trainNumber"
-              control={control}
-              render={({ field }) => (
-                <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a train" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {trains.map((t) => (
-                      <SelectItem key={t.id} value={t.trainNumber}>
-                        {t.trainNumber}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            />
-            {errors.trainNumber && (
-              <p className="text-xs text-destructive">{errors.trainNumber.message}</p>
-            )}
-          </div>
+        <form onSubmit={handleSubmit(submit)} className="space-y-4 pt-1">
 
-          {/* Departure Time */}
-          <div className="space-y-1.5">
-            <Label>Departure time (Vilnius)</Label>
-            <Controller
-              name="departureTime"
-              control={control}
-              render={({ field }) => (
-                <DateTimePicker value={field.value} onChange={field.onChange} placeholder="Pick departure date & time" />
-              )}
-            />
-            {errors.departureTime && (
-              <p className="text-xs text-destructive">{errors.departureTime.message}</p>
-            )}
-          </div>
+          <FormField label="Train number" error={errors.trainNumber?.message}>
+            <Controller name="trainNumber" control={control} render={({ field }) => (
+              <Select value={field.value} onValueChange={field.onChange}>
+                <SelectTrigger><SelectValue placeholder="Select a train" /></SelectTrigger>
+                <SelectContent>
+                  {trains.map((t) => (
+                    <SelectItem key={t.id} value={t.trainNumber}>{t.trainNumber}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )} />
+          </FormField>
 
-          {/* Platform */}
-          <div className="space-y-1.5">
-            <Label>Platform</Label>
-            <Controller
-              name="platform"
-              control={control}
-              render={({ field }) => (
-                <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select platform" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {PLATFORMS.map((p) => (
-                      <SelectItem key={p} value={p}>
-                        Platform {p}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            />
-            {errors.platform && (
-              <p className="text-xs text-destructive">{errors.platform.message}</p>
-            )}
-          </div>
+          <FormField label="Departure time (Vilnius)" error={errors.departureTime?.message}>
+            <Controller name="departureTime" control={control} render={({ field }) => (
+              <DateTimePicker value={field.value} onChange={field.onChange} placeholder="Pick departure date & time" />
+            )} />
+          </FormField>
 
-          {/* Carriages */}
-          <div className="space-y-1.5">
-            <Label>Carriages</Label>
-            <Controller
-              name="carriages"
-              control={control}
-              render={({ field }) => (
-                <Select
-                  value={String(field.value)}
-                  onValueChange={(v) => field.onChange(Number(v))}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select carriages" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {CARRIAGES_OPTIONS.map((n) => (
-                      <SelectItem key={n} value={String(n)}>
-                        {n}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            />
-            {errors.carriages && (
-              <p className="text-xs text-destructive">{errors.carriages.message}</p>
-            )}
-          </div>
+          <FormField label="Platform" error={errors.platform?.message}>
+            <Controller name="platform" control={control} render={({ field }) => (
+              <Select value={field.value} onValueChange={field.onChange}>
+                <SelectTrigger><SelectValue placeholder="Select platform" /></SelectTrigger>
+                <SelectContent>
+                  {PLATFORMS.map((p) => (
+                    <SelectItem key={p} value={p}>Platform {p}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )} />
+          </FormField>
 
-          {/* Seats */}
-          <div className="space-y-1.5">
-            <Label htmlFor="seats">Total seats (10–500)</Label>
-            <Input
-              id="seats"
-              type="number"
-              {...register("seats", { valueAsNumber: true })}
-            />
-            {errors.seats && (
-              <p className="text-xs text-destructive">{errors.seats.message}</p>
-            )}
-          </div>
+          <FormField label="Carriages" error={errors.carriages?.message}>
+            <Controller name="carriages" control={control} render={({ field }) => (
+              <Select value={String(field.value)} onValueChange={(v) => field.onChange(Number(v))}>
+                <SelectTrigger><SelectValue placeholder="Select carriages" /></SelectTrigger>
+                <SelectContent>
+                  {CARRIAGES_OPTIONS.map((n) => (
+                    <SelectItem key={n} value={String(n)}>{n}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )} />
+          </FormField>
 
-          {/* Arrival Station */}
-          <div className="space-y-1.5">
-            <Label>Arrival station</Label>
-            <Controller
-              name="arrivalStation"
-              control={control}
-              render={({ field }) => (
-                <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select station" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {STATIONS.map((s) => (
-                      <SelectItem key={s} value={s}>
-                        {s}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            />
-            {errors.arrivalStation && (
-              <p className="text-xs text-destructive">{errors.arrivalStation.message}</p>
-            )}
-          </div>
+          <FormField label="Total seats (10–500)" error={errors.seats?.message}>
+            <Input id="seats" type="number" {...register("seats", { valueAsNumber: true })} />
+          </FormField>
 
-          {/* Arrival Time */}
-          <div className="space-y-1.5">
-            <Label>Arrival time</Label>
-            <Controller
-              name="arrivalTime"
-              control={control}
-              render={({ field }) => (
-                <DateTimePicker value={field.value} onChange={field.onChange} placeholder="Pick arrival date & time" />
-              )}
-            />
-            {errors.arrivalTime && (
-              <p className="text-xs text-destructive">{errors.arrivalTime.message}</p>
-            )}
-          </div>
+          <FormField label="Arrival station" error={errors.arrivalStation?.message}>
+            <Controller name="arrivalStation" control={control} render={({ field }) => (
+              <Select value={field.value} onValueChange={field.onChange}>
+                <SelectTrigger><SelectValue placeholder="Select station" /></SelectTrigger>
+                <SelectContent>
+                  {stations.map((s) => (
+                    <SelectItem key={s.id} value={s.name}>{s.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )} />
+          </FormField>
 
-          {/* Departure from Arrival Station */}
-          <div className="space-y-1.5">
-            <Label>Departure from arrival station</Label>
-            <Controller
-              name="arrivalDepartureTime"
-              control={control}
-              render={({ field }) => (
-                <DateTimePicker value={field.value} onChange={field.onChange} placeholder="Pick departure date & time" />
-              )}
-            />
-            {errors.arrivalDepartureTime && (
-              <p className="text-xs text-destructive">{errors.arrivalDepartureTime.message}</p>
-            )}
-          </div>
+          <FormField label="Arrival time" error={errors.arrivalTime?.message}>
+            <Controller name="arrivalTime" control={control} render={({ field }) => (
+              <DateTimePicker value={field.value} onChange={field.onChange} placeholder="Pick arrival date & time" />
+            )} />
+          </FormField>
 
-          {/* Status */}
-          <div className="space-y-1.5">
-            <Label>Status</Label>
-            <Controller
-              name="status"
-              control={control}
-              render={({ field }) => (
-                <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="on-time">On Time</SelectItem>
-                    <SelectItem value="delayed">Delayed</SelectItem>
-                    <SelectItem value="cancelled">Cancelled</SelectItem>
-                    <SelectItem value="archived">Archived</SelectItem>
-                  </SelectContent>
-                </Select>
-              )}
-            />
-            {errors.status && (
-              <p className="text-xs text-destructive">{errors.status.message}</p>
-            )}
-          </div>
+          <FormField label="Departure from arrival station" error={errors.arrivalDepartureTime?.message}>
+            <Controller name="arrivalDepartureTime" control={control} render={({ field }) => (
+              <DateTimePicker value={field.value} onChange={field.onChange} placeholder="Pick departure date & time" />
+            )} />
+          </FormField>
 
-          {serverError && (
-            <p className="text-xs text-destructive">{serverError}</p>
-          )}
+          <FormField label="Status" error={errors.status?.message}>
+            <Controller name="status" control={control} render={({ field }) => (
+              <Select value={field.value} onValueChange={field.onChange}>
+                <SelectTrigger><SelectValue placeholder="Select status" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="on-time">On Time</SelectItem>
+                  <SelectItem value="delayed">Delayed</SelectItem>
+                  <SelectItem value="cancelled">Cancelled</SelectItem>
+                  <SelectItem value="archived">Archived</SelectItem>
+                </SelectContent>
+              </Select>
+            )} />
+          </FormField>
+
+          {serverError && <p className="text-xs text-destructive">{serverError}</p>}
 
           <div className="flex justify-end gap-2 pt-1">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => handleOpenChange(false)}
-              disabled={isSubmitting}
-            >
+            <Button type="button" variant="outline" size="sm" onClick={() => handleOpenChange(false)} disabled={isSubmitting}>
               Cancel
             </Button>
             <Button type="submit" size="sm" disabled={isSubmitting}>

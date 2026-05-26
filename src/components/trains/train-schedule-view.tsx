@@ -1,14 +1,16 @@
 import { SchedulePanel } from "@/components/trains/schedule-panel"
 import type { ISchedule } from "@/types/schedule-t"
 import type { ITrain } from "@/types/train-t"
+import type { IStation } from "@/types/station-t"
 
 interface IProps {
   schedules: ISchedule[]
   trains: ITrain[]
+  stations: IStation[]
 }
 
 export function TrainScheduleView(props: IProps) {
-  const { schedules, trains } = props
+  const { schedules, trains, stations } = props
   return (
     <div className="space-y-6">
       <div>
@@ -17,7 +19,7 @@ export function TrainScheduleView(props: IProps) {
           Manage all train schedules departing from Vilnius.
         </p>
       </div>
-      <SchedulePanel schedules={schedules} trains={trains} />
+      <SchedulePanel schedules={schedules} trains={trains} stations={stations} />
     </div>
   )
 }

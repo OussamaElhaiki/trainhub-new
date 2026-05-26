@@ -22,7 +22,7 @@ export function TrainSelector(props: IProps) {
     <Select
       value={selected}
       onValueChange={(value: string) =>
-        router.push(`/trains/schedule?train=${value}`)
+        router.replace(`/trains/schedule?train=${value}`)
       }
     >
       <SelectTrigger className="w-64">

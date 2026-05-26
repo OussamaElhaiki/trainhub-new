@@ -1,6 +1,6 @@
 "use client"
 
-import { useRouter } from "next/navigation"
+import { useState } from "react"
 import { deleteApi } from "@/utils/server-api"
 import {
   Table,
@@ -15,26 +15,35 @@ import { DeleteConfirmDialog } from "@/components/trains/delete-confirm-dialog"
 import { statusConfig, calculateDuration, formatDateTime } from "@/lib/train-utils"
 import type { ISchedule } from "@/types/schedule-t"
 import type { ITrain } from "@/types/train-t"
+import type { IStation } from "@/types/station-t"
 
 interface IProps {
   schedules: ISchedule[]
   trains: ITrain[]
+  stations: IStation[]
 }
 
 export function SchedulePanel(props: IProps) {
-  const { schedules, trains } = props
-  const router = useRouter()
+  const [schedules, setSchedules] = useState(props.schedules)
+  const { trains, stations } = props
 
   async function handleDelete(id: string) {
     await deleteApi("/api/schedules", id)
-    router.refresh()
+    setSchedules((prev) => prev.filter((s) => s.id !== id))
+  }
+
+  function handleSave(schedule: ISchedule) {
+    setSchedules((prev) => {
+      const exists = prev.find((s) => s.id === schedule.id)
+      return exists ? prev.map((s) => (s.id === schedule.id ? schedule : s)) : [...prev, schedule]
+    })
   }
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">{schedules.length} schedule{schedules.length !== 1 ? "s" : ""} found.</p>
-        <ScheduleFormDialog trains={trains} />
+        <ScheduleFormDialog trains={trains} stations={stations} onSuccess={handleSave} />
       </div>
 
       <div className="rounded-lg border border-border overflow-x-auto">
@@ -87,7 +96,7 @@ export function SchedulePanel(props: IProps) {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
-                      <ScheduleFormDialog schedule={schedule} trains={trains} />
+                      <ScheduleFormDialog schedule={schedule} trains={trains} stations={stations} onSuccess={handleSave} />
                       <DeleteConfirmDialog
                         title={`Delete schedule for ${schedule.trainNumber}?`}
                         description="This will permanently remove this schedule entry."

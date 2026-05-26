@@ -9,13 +9,16 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@better-auth/mongo-adapter": "^1.6.11",
     "@hookform/resolvers": "^5.2.2",
+    "babel-plugin-react-compiler": "^1.0.0",
+    "better-auth": "^1.6.11",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.2.1",
     "lucide-react": "^1.16.0",
     "mongoose": "^9.6.2",
-    "next": "16.2.4",
+    "next": "^15.5.18",
     "radix-ui": "^1.4.3",
     "react": "19.2.4",
     "react-day-picker": "^10.0.1",

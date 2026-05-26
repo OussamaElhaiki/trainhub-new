@@ -1,3 +1,4 @@
+import { Role } from "@/constants/role"
 import type { INav } from "@/types/nav-t"
 
 export const mainMenu: INav[] = [
@@ -10,22 +11,21 @@ export const mainMenu: INav[] = [
     title: "Trains",
     slug: "/trains",
     children: [
-      { title: "All Trains", slug: "/trains" },
-      { title: "Train Schedule", slug: "/trains/schedule" },
+      { title: "All Trains", slug: "/trains", role: Role.Administrator },
+      { title: "Train Schedule", slug: "/trains/schedule", role: Role.Administrator },
       { title: "Departure Schedule", slug: "/trains/departures" },
-      { title: "Train Search", slug: "/trains/search" }
-    ]
+      { title: "Train Search", slug: "/trains/search" },
+    ],
   },
-
   {
     title: "Stations",
     slug: "/stations",
     children: [
-      { title: "All Stations", slug: "/stations" },
+      { title: "All Stations", slug: "/stations", role: Role.Administrator },
       { title: "Arrival Times", slug: "/stations/arrivals" },
       { title: "Departures", slug: "/stations/departures" },
-      { title: "Station Search", slug: "/stations/search" }
-    ]
+      { title: "Station Search", slug: "/stations/search" },
+    ],
   },
 
   {

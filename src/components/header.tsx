@@ -1,8 +1,14 @@
 import Image from "next/image"
 import Link from "next/link"
+import { auth } from "@/utils/auth"
+import { headers } from "next/headers"
 import { Nav } from "./nav"
+import { AuthNav } from "./auth-nav"
 
-export function Header() {
+export async function Header() {
+  const session = await auth.api.getSession({ headers: await headers() })
+  const role = session?.user.role
+
   return (
     <header className="bg-background/30 backdrop-blur-md border-b border-border w-full relative z-50">
       <div className="flex items-center w-full px-6 py-3">
@@ -22,7 +28,12 @@ export function Header() {
             <span className="text-white">Train</span><span className="text-primary">Hub</span>
           </span>
         </Link>
-        <Nav />
+
+        {session && <Nav role={role} />}
+
+        <div className="ml-auto">
+          <AuthNav session={session} />
+        </div>
       </div>
     </header>
   )

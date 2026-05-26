@@ -1,0 +1,30 @@
+import { postApi, putApi } from "@/utils/server-api"
+
+interface IOptions {
+  endpoint: string
+  id?: string
+  errorCodes: Record<string, string>
+  onSuccess: (json: unknown) => void
+  setServerError: (msg: string | null) => void
+}
+
+export function useCrud(options: IOptions) {
+  const { endpoint, id, errorCodes, onSuccess, setServerError } = options
+  const isEdit = !!id
+
+  async function submit(data: object) {
+    setServerError(null)
+    const json = isEdit
+      ? await putApi(`${endpoint}/${id}`, data)
+      : await postApi(endpoint, data)
+
+    if (json?.error) {
+      setServerError(errorCodes[json.error] ?? "Something went wrong")
+      return
+    }
+
+    onSuccess(json)
+  }
+
+  return { submit, isEdit }
+}

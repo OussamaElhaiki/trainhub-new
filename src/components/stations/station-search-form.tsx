@@ -45,7 +45,7 @@ export function StationSearchForm(props: IProps) {
         <Select
           value={selected}
           onValueChange={(value: string) =>
-            router.push(`/stations/search?station=${encodeURIComponent(value)}`)
+            router.replace(`/stations/search?station=${encodeURIComponent(value)}`)
           }
         >
           <SelectTrigger className="w-64">

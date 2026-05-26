@@ -42,7 +42,7 @@ export function TrainSearchForm(props: IProps) {
         <Select
           value={selected}
           onValueChange={(value: string) =>
-            router.push(`/trains/search?train=${value}`)
+            router.replace(`/trains/search?train=${value}`)
           }
         >
           <SelectTrigger className="w-64">

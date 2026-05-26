@@ -30,3 +30,8 @@ export async function deleteStation(id: string): Promise<boolean> {
   const result = await StationModel.findByIdAndDelete(id)
   return !!result
 }
+
+export async function countStations(): Promise<number> {
+  await connectMongoose()
+  return StationModel.countDocuments()
+}
