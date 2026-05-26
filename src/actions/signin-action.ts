@@ -4,6 +4,7 @@ import { auth } from "@/utils/auth"
 import { loginSchema } from "@/utils/login-validator"
 import { redirect } from "next/navigation"
 import type { IState } from "@/types/action-t"
+import z from "zod"
 
 export async function signinAction(
   _prev: IState,
@@ -18,7 +19,7 @@ export async function signinAction(
   if (!result.success) {
     return {
       isSaved: false,
-      errors: result.error.flatten().fieldErrors as Record<string, string[]>,
+      errors: z.flattenError(result.error).fieldErrors as Record<string, string[]>,
       fields: { email: String(raw.email ?? "") },
     }
   }

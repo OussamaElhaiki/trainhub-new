@@ -1,6 +1,7 @@
 import { getTrains, createTrain } from "@/lib/train-db"
 import { trainFormSchema } from "@/types/train-t"
 import type { ITrainForm } from "@/types/train-t"
+import z from "zod"
 
 export async function GET() {
   const trains = await getTrains()
@@ -11,7 +12,7 @@ export async function POST(request: Request) {
   const body: ITrainForm = await request.json()
   const result = trainFormSchema.safeParse(body)
   if (!result.success) {
-    return Response.json({ error: result.error.flatten() }, { status: 400 })
+    return Response.json({ error: z.flattenError(result.error) }, { status: 400 })
   }
   const train = await createTrain(body)
   if (train === "duplicate") {

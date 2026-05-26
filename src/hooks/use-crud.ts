@@ -1,4 +1,4 @@
-import { postApi, putApi } from "@/utils/server-api"
+import { postApi } from "@/utils/server-api"
 
 interface IOptions<T> {
   endpoint: string
@@ -14,9 +14,11 @@ export function useCrud<T>(options: IOptions<T>) {
 
   async function submit(data: object) {
     setServerError(null)
-    const json = isEdit
-      ? await putApi(`${endpoint}/${id}`, data)
-      : await postApi(endpoint, data)
+    const json = await postApi(
+      isEdit ? `${endpoint}/${id}` : endpoint,
+      data,
+      isEdit ? "PUT" : "POST"
+    )
 
     if (json?.error) {
       setServerError(errorCodes[json.error] ?? "Something went wrong")

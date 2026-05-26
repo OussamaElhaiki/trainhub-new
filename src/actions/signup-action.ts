@@ -3,6 +3,7 @@
 import { auth } from "@/utils/auth"
 import { registerSchema } from "@/dto/register-dto"
 import type { IState } from "@/types/action-t"
+import z from "zod"
 
 export async function signupAction(
   _prev: IState,
@@ -19,7 +20,7 @@ export async function signupAction(
   if (!result.success) {
     return {
       isSaved: false,
-      errors: result.error.flatten().fieldErrors as Record<string, string[]>,
+      errors: z.flattenError(result.error).fieldErrors as Record<string, string[]>,
       fields: {
         name: String(raw.name ?? ""),
         email: String(raw.email ?? ""),
