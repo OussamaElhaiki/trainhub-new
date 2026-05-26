@@ -4,6 +4,7 @@ import { auth } from "@/utils/auth"
 import { headers } from "next/headers"
 import { Nav } from "./nav"
 import { AuthNav } from "./auth-nav"
+import { NavSearch } from "./nav-search/nav-search"
 
 export async function Header() {
   const session = await auth.api.getSession({ headers: await headers() })
@@ -11,7 +12,7 @@ export async function Header() {
 
   return (
     <header className="bg-background/30 backdrop-blur-md border-b border-border w-full relative z-50">
-      <div className="flex items-center w-full px-6 py-3">
+      <div className="flex items-center w-full px-6 py-3 gap-4">
         <Link
           href="/"
           className="flex items-center gap-3 no-underline shrink-0 visited:!text-inherit"
@@ -31,7 +32,8 @@ export async function Header() {
 
         {session && <Nav role={role} />}
 
-        <div className="ml-auto">
+        <div className="ml-auto flex items-center gap-4">
+          {session && <NavSearch />}
           <AuthNav session={session} />
         </div>
       </div>

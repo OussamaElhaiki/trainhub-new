@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { deleteApi } from "@/utils/server-api"
+import { deleteApi, getApi } from "@/utils/server-api"
 import {
   Table,
   TableBody,
@@ -16,6 +16,7 @@ import { statusConfig, calculateDuration, formatDateTime } from "@/lib/train-uti
 import type { ISchedule } from "@/types/schedule-t"
 import type { ITrain } from "@/types/train-t"
 import type { IStation } from "@/types/station-t"
+import { ScheduleStatus } from "@/constants/status"
 
 interface IProps {
   schedules: ISchedule[]
@@ -27,23 +28,21 @@ export function SchedulePanel(props: IProps) {
   const [schedules, setSchedules] = useState(props.schedules)
   const { trains, stations } = props
 
-  async function handleDelete(id: string) {
-    await deleteApi("/api/schedules", id)
-    setSchedules((prev) => prev.filter((s) => s.id !== id))
+  async function refresh() {
+    const data = await getApi<ISchedule[]>("/api/schedules")
+    if (data) setSchedules(data)
   }
 
-  function handleSave(schedule: ISchedule) {
-    setSchedules((prev) => {
-      const exists = prev.find((s) => s.id === schedule.id)
-      return exists ? prev.map((s) => (s.id === schedule.id ? schedule : s)) : [...prev, schedule]
-    })
+  async function handleDelete(id: string) {
+    await deleteApi("/api/schedules", id)
+    await refresh()
   }
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">{schedules.length} schedule{schedules.length !== 1 ? "s" : ""} found.</p>
-        <ScheduleFormDialog trains={trains} stations={stations} onSuccess={handleSave} />
+        <ScheduleFormDialog trains={trains} stations={stations} onSuccess={refresh} />
       </div>
 
       <div className="rounded-lg border border-border overflow-x-auto">
@@ -76,7 +75,7 @@ export function SchedulePanel(props: IProps) {
               return (
                 <TableRow
                   key={schedule.id}
-                  className={schedule.status === "archived" ? "opacity-60" : ""}
+                  className={schedule.status === ScheduleStatus.Archived ? "opacity-60" : ""}
                 >
                   <TableCell className="font-medium">{schedule.trainNumber}</TableCell>
                   <TableCell>{formatDateTime(schedule.departureTime)}</TableCell>
@@ -96,7 +95,7 @@ export function SchedulePanel(props: IProps) {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
-                      <ScheduleFormDialog schedule={schedule} trains={trains} stations={stations} onSuccess={handleSave} />
+                      <ScheduleFormDialog schedule={schedule} trains={trains} stations={stations} onSuccess={refresh} />
                       <DeleteConfirmDialog
                         title={`Delete schedule for ${schedule.trainNumber}?`}
                         description="This will permanently remove this schedule entry."

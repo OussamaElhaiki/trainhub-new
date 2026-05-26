@@ -20,6 +20,7 @@ import { Label } from "@/components/ui/label"
 import { statusConfig, formatDateTime, calculateDuration, sortByArrivalTime } from "@/lib/train-utils"
 import { TrainDetailsDialog } from "@/components/trains/train-details-dialog"
 import type { ISchedule } from "@/types/schedule-t"
+import { ScheduleStatus } from "@/constants/status"
 
 interface IProps {
   schedules: ISchedule[]
@@ -87,7 +88,7 @@ export function StationArrivalsPanel(props: IProps) {
               return (
                 <TableRow
                   key={schedule.id}
-                  className={schedule.status === "cancelled" || schedule.status === "archived" ? "opacity-60" : ""}
+                  className={schedule.status === ScheduleStatus.Cancelled || schedule.status === ScheduleStatus.Archived ? "opacity-60" : ""}
                 >
                   <TableCell className="font-mono text-lg font-semibold">
                     {formatDateTime(schedule.arrivalTime)}

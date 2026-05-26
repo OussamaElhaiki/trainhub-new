@@ -1,8 +1,9 @@
 "use client"
+
+import { useActionState, useEffect } from "react"
 import { useDialogForm } from "@/hooks/use-dialog-form"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useCrud } from "@/hooks/use-crud"
+import { stationAction } from "@/actions/station-action"
+import type { IState } from "@/types/action-t"
 import { PlusIcon, PencilIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -14,44 +15,29 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { stationFormSchema } from "@/types/station-t"
-import type { IStation, IStationForm } from "@/types/station-t"
+import type { IStation } from "@/types/station-t"
 
 interface IProps {
   station?: IStation
-  onSuccess?: (station: IStation) => void
+  onSuccess?: () => void
   trigger?: React.ReactNode
 }
 
+const INITIAL_STATE = { isSaved: false }
+
 export function StationFormDialog(props: IProps) {
   const { station, onSuccess, trigger } = props
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors, isSubmitting },
-  } = useForm<IStationForm>({
-    resolver: zodResolver(stationFormSchema),
-    defaultValues: { name: station?.name ?? "" },
-    mode: "onTouched",
-  })
-  const { open, serverError, setServerError, handleOpenChange } = useDialogForm(
-    () => reset({ name: station?.name ?? "" })
-  )
+  const isEdit = !!station
 
-  const { submit, isEdit } = useCrud({
-    endpoint: "/api/stations",
-    id: station?.id,
-    errorCodes: {
-      duplicate: "A station with this name already exists",
-      not_found: "Station not found",
-    },
-    onSuccess: (json) => {
+  const [state, action, isPending] = useActionState<IState, FormData>(stationAction, INITIAL_STATE)
+  const { open, handleOpenChange } = useDialogForm(() => {})
+
+  useEffect(() => {
+    if (state.isSaved) {
       handleOpenChange(false)
-      onSuccess?.(json as IStation)
-    },
-    setServerError,
-  })
+      onSuccess?.()
+    }
+  }, [state])
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -67,21 +53,24 @@ export function StationFormDialog(props: IProps) {
           <DialogTitle>{isEdit ? "Edit Station" : "Add Station"}</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(submit)} className="space-y-4 pt-1">
+        <form action={action} className="space-y-4 pt-1">
+          {station && <input type="hidden" name="id" value={station.id} />}
+
           <div className="space-y-1.5">
             <Label htmlFor="name">Station name</Label>
             <Input
               id="name"
+              name="name"
               placeholder="e.g. Kaunas"
-              {...register("name")}
+              defaultValue={station?.name ?? ""}
             />
-            {errors.name && (
-              <p className="text-xs text-destructive">{errors.name.message}</p>
+            {state.errors?.name && (
+              <p className="text-xs text-destructive">{state.errors.name[0]}</p>
             )}
           </div>
 
-          {serverError && (
-            <p className="text-xs text-destructive">{serverError}</p>
+          {state.message && !state.isSaved && (
+            <p className="text-xs text-destructive">{state.message}</p>
           )}
 
           <div className="flex justify-end gap-2">
@@ -90,12 +79,12 @@ export function StationFormDialog(props: IProps) {
               variant="outline"
               size="sm"
               onClick={() => handleOpenChange(false)}
-              disabled={isSubmitting}
+              disabled={isPending}
             >
               Cancel
             </Button>
-            <Button type="submit" size="sm" disabled={isSubmitting}>
-              {isSubmitting ? "Saving…" : isEdit ? "Save changes" : "Add Station"}
+            <Button type="submit" size="sm" disabled={isPending}>
+              {isPending ? "Saving…" : isEdit ? "Save changes" : "Add Station"}
             </Button>
           </div>
         </form>

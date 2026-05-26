@@ -20,6 +20,7 @@ import { Label } from "@/components/ui/label"
 import { statusConfig, calculateDuration, formatDateTime } from "@/lib/train-utils"
 import type { ISchedule } from "@/types/schedule-t"
 import type { ITrain } from "@/types/train-t"
+import { ScheduleStatus } from "@/constants/status"
 
 interface IProps {
   trains: ITrain[]
@@ -81,7 +82,7 @@ export function TrainSearchForm(props: IProps) {
                 return (
                   <TableRow
                     key={schedule.id}
-                    className={schedule.status === "archived" ? "opacity-60" : ""}
+                    className={schedule.status === ScheduleStatus.Archived ? "opacity-60" : ""}
                   >
                     <TableCell>{formatDateTime(schedule.departureTime)}</TableCell>
                     <TableCell>{schedule.arrivalStation}</TableCell>

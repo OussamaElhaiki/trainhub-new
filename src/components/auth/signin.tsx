@@ -21,7 +21,7 @@ function SubmitButton() {
 }
 
 export function SignInForm() {
-  const [state, action] = useActionState(signinAction, INITIAL)
+  const [state, action] = useActionState<IState, FormData>(signinAction, INITIAL)
 
   return (
     <form action={action} className="space-y-4" noValidate>

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { deleteApi } from "@/utils/server-api"
+import { deleteApi, getApi } from "@/utils/server-api"
 import {
   Table,
   TableBody,
@@ -21,23 +21,21 @@ interface IProps {
 export function TrainsPanel(props: IProps) {
   const [trains, setTrains] = useState(props.trains)
 
-  async function handleDelete(id: string) {
-    await deleteApi("/api/trains", id)
-    setTrains((prev) => prev.filter((t) => t.id !== id))
+  async function refresh() {
+    const data = await getApi<ITrain[]>("/api/trains")
+    if (data) setTrains(data)
   }
 
-  function handleSave(train: ITrain) {
-    setTrains((prev) => {
-      const exists = prev.find((t) => t.id === train.id)
-      return exists ? prev.map((t) => (t.id === train.id ? train : t)) : [...prev, train]
-    })
+  async function handleDelete(id: string) {
+    await deleteApi("/api/trains", id)
+    await refresh()
   }
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">{trains.length} train{trains.length !== 1 ? "s" : ""} registered.</p>
-        <TrainFormDialog onSuccess={handleSave} />
+        <TrainFormDialog onSuccess={refresh} />
       </div>
 
       <div className="rounded-lg border border-border">
@@ -61,7 +59,7 @@ export function TrainsPanel(props: IProps) {
                 <TableCell className="font-medium">{train.trainNumber}</TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">
-                    <TrainFormDialog train={train} onSuccess={handleSave} />
+                    <TrainFormDialog train={train} onSuccess={refresh} />
                     <DeleteConfirmDialog
                       title={`Delete train ${train.trainNumber}?`}
                       description="This will permanently remove this train. Any schedules referencing it will remain but the train won't appear in the train list."

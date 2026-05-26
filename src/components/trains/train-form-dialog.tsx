@@ -1,9 +1,9 @@
 "use client"
 
+import { useActionState, useEffect } from "react"
 import { useDialogForm } from "@/hooks/use-dialog-form"
-import { useForm } from "react-hook-form"
-import { useCrud } from "@/hooks/use-crud"
-import { zodResolver } from "@hookform/resolvers/zod"
+import { trainAction } from "@/actions/train-action"
+import type { IState } from "@/types/action-t"
 import { PlusIcon, PencilIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -15,44 +15,30 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { trainFormSchema } from "@/types/train-t"
-import type { ITrain, ITrainForm } from "@/types/train-t"
+import type { ITrain } from "@/types/train-t"
 
 interface IProps {
   train?: ITrain
-  onSuccess?: (train: ITrain) => void
+  onSuccess?: () => void
   trigger?: React.ReactNode
 }
 
+const INITIAL_STATE = { isSaved: false }
+
 export function TrainFormDialog(props: IProps) {
   const { train, onSuccess, trigger } = props
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors, isSubmitting },
-  } = useForm<ITrainForm>({
-    resolver: zodResolver(trainFormSchema),
-    defaultValues: { trainNumber: train?.trainNumber ?? "" },
-  })
-  const { open, serverError, setServerError, handleOpenChange } = useDialogForm(
-  () => reset({ trainNumber: train?.trainNumber ?? "" })
-)
-  
-  const { submit, isEdit } = useCrud({
-  endpoint: "/api/trains",
-  id: train?.id,
-  errorCodes: {
-    duplicate: "This train number already exists",
-    not_found: "Train not found",
-  },
-  onSuccess: (json) => { handleOpenChange(false); onSuccess?.(json as ITrain) },
-  setServerError,
-})
-  
-  
+  const isEdit = !!train
 
-  
+  const [state, action, isPending] = useActionState<IState, FormData>(trainAction, INITIAL_STATE)
+  const { open, handleOpenChange } = useDialogForm(() => {})
+
+  useEffect(() => {
+    if (state.isSaved) {
+      handleOpenChange(false)
+      onSuccess?.()
+    }
+  }, [state])
+
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
@@ -67,21 +53,24 @@ export function TrainFormDialog(props: IProps) {
           <DialogTitle>{isEdit ? "Edit Train" : "Add Train"}</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(submit)} className="space-y-4 pt-1">
+        <form action={action} className="space-y-4 pt-1">
+          {train && <input type="hidden" name="id" value={train.id} />}
+
           <div className="space-y-1.5">
             <Label htmlFor="trainNumber">Train number</Label>
             <Input
               id="trainNumber"
+              name="trainNumber"
               placeholder="e.g. IC-001"
-              {...register("trainNumber")}
+              defaultValue={train?.trainNumber ?? ""}
             />
-            {errors.trainNumber && (
-              <p className="text-xs text-destructive">{errors.trainNumber.message}</p>
+            {state.errors?.trainNumber && (
+              <p className="text-xs text-destructive">{state.errors.trainNumber[0]}</p>
             )}
           </div>
 
-          {serverError && (
-            <p className="text-xs text-destructive">{serverError}</p>
+          {state.message && !state.isSaved && (
+            <p className="text-xs text-destructive">{state.message}</p>
           )}
 
           <div className="flex justify-end gap-2">
@@ -90,12 +79,12 @@ export function TrainFormDialog(props: IProps) {
               variant="outline"
               size="sm"
               onClick={() => handleOpenChange(false)}
-              disabled={isSubmitting}
+              disabled={isPending}
             >
               Cancel
             </Button>
-            <Button type="submit" size="sm" disabled={isSubmitting}>
-              {isSubmitting ? "Saving…" : isEdit ? "Save changes" : "Add Train"}
+            <Button type="submit" size="sm" disabled={isPending}>
+              {isPending ? "Saving…" : isEdit ? "Save changes" : "Add Train"}
             </Button>
           </div>
         </form>

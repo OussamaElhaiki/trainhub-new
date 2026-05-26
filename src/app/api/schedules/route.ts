@@ -3,8 +3,13 @@ import { scheduleFormSchema } from "@/types/schedule-t"
 import type { IScheduleForm } from "@/types/schedule-t"
 import z from "zod"
 
-export async function GET() {
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url)
+  const arrivalStation = searchParams.get("arrivalStation")
   const schedules = await getSchedules()
+  if (arrivalStation) {
+    return Response.json(schedules.filter((s) => s.arrivalStation === arrivalStation))
+  }
   return Response.json(schedules)
 }
 

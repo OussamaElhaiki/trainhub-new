@@ -1,6 +1,7 @@
 import { model, models, Schema, Model, Types } from "mongoose"
 import type { WithStringId } from "@/models/model-t"
 import type { IScheduleForm } from "@/types/schedule-t"
+import { ScheduleStatus } from "@/constants/status"
 
 type IScheduleDoc = IScheduleForm
 
@@ -18,8 +19,8 @@ const scheduleSchema = new Schema<IScheduleDoc>(
     arrivalDepartureTime: { type: String, required: true },
     status: {
       type: String,
-      enum: ["on-time", "delayed", "cancelled", "archived"],
-      default: "on-time",
+      enum: Object.values(ScheduleStatus),
+      default: ScheduleStatus.OnTime,
     },
   },
   {

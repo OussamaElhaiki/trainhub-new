@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { ScheduleStatus } from "@/constants/status"
 
 export const scheduleFormSchema = z
   .object({
@@ -10,7 +11,7 @@ export const scheduleFormSchema = z
     arrivalStation: z.string().min(1, "Arrival station is required"),
     arrivalTime: z.string().min(1, "Arrival time is required").regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/, "Invalid datetime"),
     arrivalDepartureTime: z.string().min(1, "Departure time from arrival station is required").regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/, "Invalid datetime"),
-    status: z.enum(["on-time", "delayed", "cancelled", "archived"]),
+    status: z.nativeEnum(ScheduleStatus),
   })
   .refine((data) => data.arrivalTime !== data.departureTime, {
     message: "Arrival time must differ from departure time from Vilnius",
@@ -28,7 +29,7 @@ export type ISchedule = IScheduleForm & { id: string }
 export const scheduleSearchSchema = z.object({
   trainNumber: z.string().optional(),
   arrivalStation: z.string().optional(),
-  status: z.enum(["all", "on-time", "delayed", "cancelled", "archived"]),
+  status: z.enum(["all", ScheduleStatus.OnTime, ScheduleStatus.Delayed, ScheduleStatus.Cancelled, ScheduleStatus.Archived]),
 })
 
 export type IScheduleSearch = z.infer<typeof scheduleSearchSchema>

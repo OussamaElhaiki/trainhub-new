@@ -21,7 +21,7 @@ function SubmitButton() {
 }
 
 export function RegisterForm() {
-  const [state, action] = useActionState(signupAction, INITIAL)
+  const [state, action] = useActionState<IState, FormData>(signupAction, INITIAL)
 
   if (state.isSaved) {
     return (

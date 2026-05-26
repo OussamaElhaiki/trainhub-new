@@ -1,5 +1,6 @@
 import { format, parseISO, isValid } from "date-fns"
 import type { ISchedule } from "@/types/schedule-t"
+import { ScheduleStatus } from "@/constants/status"
 
 export function formatDateTime(value: string): string {
   if (!value) return "—"
@@ -16,12 +17,12 @@ function extractTime(value: string): string {
   return value
 }
 
-export const statusConfig = {
-  "on-time": { label: "On Time", className: "bg-green-500/20 text-green-400 border-green-500/30", rowClass: "border-l-2 border-l-green-500/70" },
-  delayed: { label: "Delayed", className: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30", rowClass: "border-l-2 border-l-yellow-500/70" },
-  cancelled: { label: "Cancelled", className: "bg-red-500/20 text-red-400 border-red-500/30", rowClass: "border-l-2 border-l-red-500/70" },
-  archived: { label: "Archived", className: "bg-zinc-500/20 text-zinc-400 border-zinc-500/30", rowClass: "border-l-2 border-l-zinc-500/50" },
-} as const
+export const statusConfig: Record<ScheduleStatus, { label: string; className: string; rowClass: string }> = {
+  [ScheduleStatus.OnTime]: { label: "On Time", className: "bg-green-500/20 text-green-400 border-green-500/30", rowClass: "border-l-2 border-l-green-500/70" },
+  [ScheduleStatus.Delayed]: { label: "Delayed", className: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30", rowClass: "border-l-2 border-l-yellow-500/70" },
+  [ScheduleStatus.Cancelled]: { label: "Cancelled", className: "bg-red-500/20 text-red-400 border-red-500/30", rowClass: "border-l-2 border-l-red-500/70" },
+  [ScheduleStatus.Archived]: { label: "Archived", className: "bg-zinc-500/20 text-zinc-400 border-zinc-500/30", rowClass: "border-l-2 border-l-zinc-500/50" },
+}
 
 export function calculateDuration(startTime: string, endTime: string): string {
   const [startHour = 0, startMin = 0] = extractTime(startTime).split(":").map(Number)
@@ -56,7 +57,7 @@ export function sortByArrivalDepartureTime(schedules: ISchedule[]): ISchedule[] 
 }
 
 export function filterActiveSchedules(schedules: ISchedule[]): ISchedule[] {
-  return schedules.filter((s) => s.status !== "archived")
+  return schedules.filter((s) => s.status !== ScheduleStatus.Archived)
 }
 
 export type IRouteGroup = {

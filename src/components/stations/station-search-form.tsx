@@ -21,6 +21,7 @@ import { statusConfig, calculateDuration, formatDateTime, sortByDepartureTime } 
 import { TrainDetailsDialog } from "@/components/trains/train-details-dialog"
 import type { ISchedule } from "@/types/schedule-t"
 import type { IStation } from "@/types/station-t"
+import { ScheduleStatus } from "@/constants/status"
 
 interface IProps {
   stations: IStation[]
@@ -85,7 +86,7 @@ export function StationSearchForm(props: IProps) {
                 return (
                   <TableRow
                     key={schedule.id}
-                    className={schedule.status === "archived" ? "opacity-60" : ""}
+                    className={schedule.status === ScheduleStatus.Archived ? "opacity-60" : ""}
                   >
                     <TableCell className="font-medium">{schedule.trainNumber}</TableCell>
                     <TableCell>{formatDateTime(schedule.departureTime)}</TableCell>

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { deleteApi } from "@/utils/server-api"
+import { deleteApi, getApi } from "@/utils/server-api"
 import {
   Table,
   TableBody,
@@ -19,20 +19,16 @@ interface IProps {
 }
 
 export function StationsPanel(props: IProps) {
-  const { stations: initialStations } = props
-  const [stations, setStations] = useState(initialStations)
+  const [stations, setStations] = useState(props.stations)
 
-  function handleSuccess(updated: IStation) {
-    setStations((prev) => {
-      const exists = prev.some((s) => s.id === updated.id)
-      if (exists) return prev.map((s) => (s.id === updated.id ? updated : s))
-      return [...prev, updated].sort((a, b) => a.name.localeCompare(b.name))
-    })
+  async function refresh() {
+    const data = await getApi<IStation[]>("/api/stations")
+    if (data) setStations(data)
   }
 
   async function handleDelete(id: string) {
     await deleteApi("/api/stations", id)
-    setStations((prev) => prev.filter((s) => s.id !== id))
+    await refresh()
   }
 
   return (
@@ -41,7 +37,7 @@ export function StationsPanel(props: IProps) {
         <p className="text-sm text-muted-foreground">
           {stations.length} station{stations.length !== 1 ? "s" : ""} registered.
         </p>
-        <StationFormDialog onSuccess={handleSuccess} />
+        <StationFormDialog onSuccess={refresh} />
       </div>
 
       <div className="rounded-lg border border-border">
@@ -65,7 +61,7 @@ export function StationsPanel(props: IProps) {
                 <TableCell className="font-medium">{station.name}</TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">
-                    <StationFormDialog station={station} onSuccess={handleSuccess} />
+                    <StationFormDialog station={station} onSuccess={refresh} />
                     <DeleteConfirmDialog
                       title={`Delete station ${station.name}?`}
                       description="This will permanently remove this station from the list."
