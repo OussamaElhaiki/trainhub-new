@@ -1,10 +1,14 @@
 const SITE = process.env.NEXT_PUBLIC_APP_URL
 
-export const getApi = async <T>(url: string, options: RequestInit = {}): Promise<T | undefined> => {
+export const getApi = async <T>(
+  url: string,
+  options: Record<string, RequestInit> = {}
+): Promise<T | undefined> => {
   const response = await fetch(`${SITE}${url}`, options)
   try {
     return await response.json() as T
-  } catch {
+  } catch (error) {
+    console.log(error)
     return undefined
   }
 }
@@ -23,6 +27,5 @@ export const putApi = async (url: string, body: object) => {
 }
 
 export const deleteApi = async (url: string, id: string) => {
-  const response = await fetch(`${SITE}${url}/${id}`, { method: "DELETE" })
-  return await response.json()
+  await postApi(`${url}/${id}`, { id }, "DELETE")
 }

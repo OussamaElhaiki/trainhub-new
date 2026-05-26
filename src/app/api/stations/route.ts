@@ -13,7 +13,7 @@ export async function POST(request: Request) {
   if (!result.success) {
     return Response.json({ error: result.error.flatten() }, { status: 400 })
   }
-  const station = await createStation(result.data)
+  const station = await createStation(body)
   if (station === "duplicate") {
     return Response.json({ error: "duplicate" }, { status: 409 })
   }

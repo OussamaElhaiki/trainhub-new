@@ -9,7 +9,8 @@ interface IProps {
   session: ISession | null
 }
 
-export function AuthNav({ session }: IProps) {
+export function AuthNav(props: IProps) {
+  const { session } = props
   if (!session) {
     return (
       <ul className="grid grid-flow-col w-fit gap-x-2">
