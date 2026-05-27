@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/table"
 import { Label } from "@/components/ui/label"
 import { statusConfig, calculateDuration, formatDateTime } from "@/lib/train-utils"
+import { useDict } from "@/lib/dictionary-context"
 import type { ISchedule } from "@/types/schedule-t"
 import type { ITrain } from "@/types/train-t"
 import { ScheduleStatus } from "@/constants/status"
@@ -31,6 +32,9 @@ interface IProps {
 export function TrainSearchForm(props: IProps) {
   const { trains, schedules } = props
   const [selected, setSelected] = useState(props.selected)
+  const dict = useDict()
+  const p = dict.pages.trainSearch
+  const c = dict.common
 
   const results = selected
     ? schedules.filter((s) => s.trainNumber === selected)
@@ -39,16 +43,14 @@ export function TrainSearchForm(props: IProps) {
   return (
     <div className="space-y-6">
       <div className="space-y-1.5">
-        <Label>Select train number</Label>
+        <Label>{p.selectTrain}</Label>
         <Select value={selected} onValueChange={setSelected}>
           <SelectTrigger className="w-64">
-            <SelectValue placeholder="Choose a train" />
+            <SelectValue placeholder={p.chooseTrain} />
           </SelectTrigger>
           <SelectContent>
             {trains.map((t) => (
-              <SelectItem key={t.id} value={t.trainNumber}>
-                {t.trainNumber}
-              </SelectItem>
+              <SelectItem key={t.id} value={t.trainNumber}>{t.trainNumber}</SelectItem>
             ))}
           </SelectContent>
         </Select>
@@ -56,7 +58,7 @@ export function TrainSearchForm(props: IProps) {
 
       {selected && results.length === 0 && (
         <p className="text-sm text-muted-foreground">
-          No schedules found for train <span className="font-medium">{selected}</span>.
+          {p.noResults} <span className="font-medium">{selected}</span>.
         </p>
       )}
 
@@ -65,20 +67,21 @@ export function TrainSearchForm(props: IProps) {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Departure</TableHead>
-                <TableHead>Destination</TableHead>
-                <TableHead>Arrival</TableHead>
-                <TableHead>Return dep.</TableHead>
-                <TableHead>Duration</TableHead>
-                <TableHead>Platform</TableHead>
-                <TableHead>Carriages</TableHead>
-                <TableHead>Seats</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>{c.departure}</TableHead>
+                <TableHead>{c.destination}</TableHead>
+                <TableHead>{c.arrival}</TableHead>
+                <TableHead>{p.returnDep}</TableHead>
+                <TableHead>{c.duration}</TableHead>
+                <TableHead>{c.platform}</TableHead>
+                <TableHead>{c.carriages}</TableHead>
+                <TableHead>{c.seats}</TableHead>
+                <TableHead>{c.status}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {results.map((schedule) => {
-                const status = statusConfig[schedule.status]
+                const sc = statusConfig[schedule.status]
+                const statusLabel = dict.status[schedule.status as keyof typeof dict.status]
                 return (
                   <TableRow
                     key={schedule.id}
@@ -95,8 +98,8 @@ export function TrainSearchForm(props: IProps) {
                     <TableCell>{schedule.carriages}</TableCell>
                     <TableCell>{schedule.seats}</TableCell>
                     <TableCell>
-                      <span className={`rounded-full border px-2 py-0.5 text-xs font-semibold ${status.className}`}>
-                        {status.label}
+                      <span className={`rounded-full border px-2 py-0.5 text-xs font-semibold ${sc.className}`}>
+                        {statusLabel}
                       </span>
                     </TableCell>
                   </TableRow>
@@ -108,9 +111,7 @@ export function TrainSearchForm(props: IProps) {
       )}
 
       {!selected && (
-        <p className="text-sm text-muted-foreground">
-          Choose a train number above to see its schedules.
-        </p>
+        <p className="text-sm text-muted-foreground">{p.hint}</p>
       )}
     </div>
   )

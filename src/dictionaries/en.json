@@ -1,0 +1,201 @@
+{
+  "nav": {
+    "trains": "Trains",
+    "stations": "Stations",
+    "routes": "Routes",
+    "timetables": "Timetables",
+    "information": "Information",
+    "administration": "Administration",
+    "departureSchedule": "Departure Schedule",
+    "trainSearch": "Train Search",
+    "allTrains": "All Trains",
+    "trainSchedule": "Train Schedule",
+    "allStations": "All Stations",
+    "arrivalTimes": "Arrival Times",
+    "departures": "Departures",
+    "stationSearch": "Station Search",
+    "trainRoutes": "Train Routes",
+    "arrivalDestinations": "Arrival Destinations",
+    "routeSearch": "Route Search",
+    "dailySchedule": "Daily Schedule",
+    "platformSchedule": "Platform Schedule",
+    "upcomingDepartures": "Upcoming Departures",
+    "platforms": "Platforms",
+    "carriagesSeats": "Carriages & Seats",
+    "travelInformation": "Travel Information",
+    "manageTrains": "Manage Trains",
+    "manageStations": "Manage Stations",
+    "manageSchedules": "Manage Schedules"
+  },
+  "auth": {
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "signUp": "Sign up",
+    "createAccount": "Create account",
+    "signingIn": "Signing in…",
+    "creatingAccount": "Creating account…",
+    "noAccount": "Don't have an account?",
+    "haveAccount": "Already have an account?"
+  },
+  "home": {
+    "title": "Welcome to TrainHub",
+    "subtitle": "Vilnius Railway Station Schedule Management System",
+    "description": "Navigate through the menu above to view train schedules, stations, routes, and more."
+  },
+  "status": {
+    "on-time": "On Time",
+    "delayed": "Delayed",
+    "cancelled": "Cancelled",
+    "archived": "Archived"
+  },
+  "common": {
+    "time": "Time",
+    "train": "Train",
+    "destination": "Destination",
+    "platform": "Platform",
+    "status": "Status",
+    "departure": "Departure",
+    "arrival": "Arrival",
+    "duration": "Duration",
+    "carriages": "Carriages",
+    "seats": "Seats",
+    "actions": "Actions",
+    "details": "Details",
+    "allStations": "All stations",
+    "filterByStation": "Filter by station",
+    "showing": "Showing",
+    "departureWord": "departure",
+    "departuresWord": "departures",
+    "arrivalWord": "arrival",
+    "arrivalsWord": "arrivals",
+    "contentComingSoon": "Content coming soon."
+  },
+  "pages": {
+    "departureSchedule": {
+      "title": "Departure Schedule",
+      "subtitle": "All trains departing from Vilnius, sorted by departure time.",
+      "filterByArrival": "Filter by arrival station",
+      "noResults": "No departures found for the selected station."
+    },
+    "allTrains": {
+      "title": "All Trains",
+      "subtitle": "Manage the list of trains departing from Vilnius railway station.",
+      "trainRegistered": "train registered.",
+      "trainsRegistered": "trains registered.",
+      "trainNumber": "Train number",
+      "noTrains": "No trains yet. Add the first one above."
+    },
+    "trainSchedule": {
+      "title": "Train Schedule",
+      "subtitle": "Manage all train schedules departing from Vilnius.",
+      "scheduleFound": "schedule found.",
+      "schedulesFound": "schedules found.",
+      "returnDep": "Return dep.",
+      "noSchedules": "No schedules yet. Add the first one above."
+    },
+    "trainSearch": {
+      "title": "Train Search",
+      "subtitle": "Select a train to view all its schedules.",
+      "selectTrain": "Select train number",
+      "chooseTrain": "Choose a train",
+      "returnDep": "Return dep.",
+      "noResults": "No schedules found for train",
+      "hint": "Choose a train number above to see its schedules."
+    },
+    "allStations": {
+      "title": "All Stations",
+      "subtitle": "Manage the list of arrival stations served from Vilnius railway station.",
+      "stationRegistered": "station registered.",
+      "stationsRegistered": "stations registered.",
+      "stationName": "Station name",
+      "noStations": "No stations yet. Add the first one above."
+    },
+    "arrivalTimes": {
+      "title": "Arrival Times",
+      "subtitle": "Trains arriving at each station, sorted by arrival time.",
+      "arrivalTime": "Arrival time",
+      "station": "Station",
+      "departureVilnius": "Departure (Vilnius)",
+      "noArrivals": "No arrivals found"
+    },
+    "stationDepartures": {
+      "title": "Departures",
+      "subtitle": "Return departures from each arrival station back towards Vilnius.",
+      "departsAt": "Departs at",
+      "fromStation": "From station",
+      "arrivedAt": "Arrived at",
+      "noResults": "No departures found"
+    },
+    "stationSearch": {
+      "title": "Station Search",
+      "subtitle": "Select a station to view all trains serving it.",
+      "selectStation": "Select station",
+      "chooseStation": "Choose a station",
+      "returnDep": "Return dep.",
+      "departureVilnius": "Departure (Vilnius)",
+      "noResults": "No schedules found for station",
+      "hint": "Choose a station above to see all trains serving it."
+    },
+    "trainRoutes": {
+      "title": "Train Routes",
+      "subtitle": "All routes operating from Vilnius.",
+      "firstDep": "First dep.",
+      "lastDep": "Last dep.",
+      "journeyTime": "Journey time",
+      "noRoutes": "No routes available.",
+      "viewSchedules": "View schedules"
+    },
+    "arrivalDestinations": {
+      "title": "Arrival Destinations",
+      "subtitle": "All stations reachable from Vilnius.",
+      "trains": "Trains",
+      "nextDep": "Next dep.",
+      "journey": "Journey",
+      "noDestinations": "No destinations available."
+    },
+    "routeSearch": {
+      "title": "Route Search",
+      "subtitle": "Find trains between Vilnius and your destination.",
+      "selectDestination": "Select destination",
+      "chooseDestination": "Choose a destination",
+      "returnDep": "Return dep.",
+      "noResults": "No schedules found for",
+      "hint": "Choose a destination above to see available trains."
+    },
+    "dailySchedule": {
+      "title": "Daily Schedule",
+      "subtitle": "Departures grouped by date",
+      "filterByDate": "Filter by date",
+      "show": "Show",
+      "clear": "Clear",
+      "noSchedules": "No schedules found"
+    },
+    "platformSchedule": {
+      "title": "Platform Schedule",
+      "subtitle": "Departures grouped by platform",
+      "filterByPlatform": "Filter by platform",
+      "allPlatforms": "All platforms",
+      "platform": "Platform",
+      "noSchedules": "No schedules found"
+    },
+    "upcomingDepartures": {
+      "title": "Upcoming Departures",
+      "scheduledFromNow": "scheduled from now",
+      "to": "to",
+      "filterByDest": "Filter by destination",
+      "allDestinations": "All destinations",
+      "noResults": "No upcoming departures found"
+    },
+    "details": {
+      "button": "Details",
+      "statusLabel": "Status",
+      "departureVilnius": "Departure from Vilnius",
+      "arrivalAt": "Arrival at",
+      "departureFrom": "Departure from",
+      "travelDuration": "Travel duration",
+      "platform": "Platform",
+      "carriages": "Carriages",
+      "totalSeats": "Total seats"
+    }
+  }
+}

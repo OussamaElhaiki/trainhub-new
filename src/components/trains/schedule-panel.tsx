@@ -13,6 +13,7 @@ import {
 import { ScheduleFormDialog } from "@/components/trains/schedule-form-dialog"
 import { DeleteConfirmDialog } from "@/components/trains/delete-confirm-dialog"
 import { statusConfig, calculateDuration, formatDateTime } from "@/lib/train-utils"
+import { useDict } from "@/lib/dictionary-context"
 import type { ISchedule } from "@/types/schedule-t"
 import type { ITrain } from "@/types/train-t"
 import type { IStation } from "@/types/station-t"
@@ -27,6 +28,9 @@ interface IProps {
 export function SchedulePanel(props: IProps) {
   const [schedules, setSchedules] = useState(props.schedules)
   const { trains, stations } = props
+  const dict = useDict()
+  const p = dict.pages.trainSchedule
+  const c = dict.common
 
   async function refresh() {
     const data = await getApi<ISchedule[]>("/api/schedules")
@@ -41,7 +45,9 @@ export function SchedulePanel(props: IProps) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">{schedules.length} schedule{schedules.length !== 1 ? "s" : ""} found.</p>
+        <p className="text-sm text-muted-foreground">
+          {schedules.length} {schedules.length !== 1 ? p.schedulesFound : p.scheduleFound}
+        </p>
         <ScheduleFormDialog trains={trains} stations={stations} onSuccess={refresh} />
       </div>
 
@@ -49,29 +55,30 @@ export function SchedulePanel(props: IProps) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Train</TableHead>
-              <TableHead>Departure</TableHead>
-              <TableHead>Destination</TableHead>
-              <TableHead>Arrival</TableHead>
-              <TableHead>Return dep.</TableHead>
-              <TableHead>Duration</TableHead>
-              <TableHead>Platform</TableHead>
-              <TableHead>Carriages</TableHead>
-              <TableHead>Seats</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead>{c.train}</TableHead>
+              <TableHead>{c.departure}</TableHead>
+              <TableHead>{c.destination}</TableHead>
+              <TableHead>{c.arrival}</TableHead>
+              <TableHead>{p.returnDep}</TableHead>
+              <TableHead>{c.duration}</TableHead>
+              <TableHead>{c.platform}</TableHead>
+              <TableHead>{c.carriages}</TableHead>
+              <TableHead>{c.seats}</TableHead>
+              <TableHead>{c.status}</TableHead>
+              <TableHead className="text-right">{c.actions}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {schedules.length === 0 && (
               <TableRow>
                 <TableCell colSpan={11} className="text-center text-muted-foreground py-8">
-                  No schedules yet. Add the first one above.
+                  {p.noSchedules}
                 </TableCell>
               </TableRow>
             )}
             {schedules.map((schedule) => {
-              const status = statusConfig[schedule.status]
+              const sc = statusConfig[schedule.status]
+              const statusLabel = dict.status[schedule.status as keyof typeof dict.status]
               return (
                 <TableRow
                   key={schedule.id}
@@ -89,8 +96,8 @@ export function SchedulePanel(props: IProps) {
                   <TableCell>{schedule.carriages}</TableCell>
                   <TableCell>{schedule.seats}</TableCell>
                   <TableCell>
-                    <span className={`rounded-full border px-2 py-0.5 text-xs font-semibold ${status.className}`}>
-                      {status.label}
+                    <span className={`rounded-full border px-2 py-0.5 text-xs font-semibold ${sc.className}`}>
+                      {statusLabel}
                     </span>
                   </TableCell>
                   <TableCell className="text-right">

@@ -8,19 +8,26 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import type { IState } from "@/types/action-t"
+import type { IDictionary } from "@/lib/dictionary"
 
 const INITIAL: IState = { isSaved: false }
 
-function SubmitButton() {
+interface IProps {
+  lang: string
+  dict: IDictionary
+}
+
+function SubmitButton(props: { label: string; pending: string }) {
   const { pending } = useFormStatus()
   return (
     <Button type="submit" className="w-full" disabled={pending}>
-      {pending ? "Signing in…" : "Sign in"}
+      {pending ? props.pending : props.label}
     </Button>
   )
 }
 
-export function SignInForm() {
+export function SignInForm(props: IProps) {
+  const { lang, dict } = props
   const [state, action] = useActionState<IState, FormData>(signinAction, INITIAL)
 
   return (
@@ -45,12 +52,12 @@ export function SignInForm() {
         <p className="text-xs text-destructive">{state.message}</p>
       )}
 
-      <SubmitButton />
+      <SubmitButton label={dict.auth.signIn} pending={dict.auth.signingIn} />
 
       <p className="text-center text-xs text-muted-foreground">
-        Don&apos;t have an account?{" "}
-        <Link href="/signup" className="text-primary hover:underline">
-          Sign up
+        {dict.auth.noAccount}{" "}
+        <Link href={`/${lang}/signup`} className="text-primary hover:underline">
+          {dict.auth.signUp}
         </Link>
       </p>
     </form>

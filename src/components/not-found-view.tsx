@@ -1,6 +1,12 @@
 import Link from "next/link"
 
-export function NotFoundView() {
+interface IProps {
+  lang: string
+}
+
+export function NotFoundView(props: IProps) {
+  const { lang } = props
+
   return (
     <div className="flex min-h-[70vh] flex-col items-center justify-center text-center">
       <p className="text-8xl font-extrabold text-primary">404</p>
@@ -10,13 +16,13 @@ export function NotFoundView() {
       </p>
       <div className="mt-8 flex gap-3">
         <Link
-          href="/"
+          href={`/${lang}`}
           className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium !text-primary-foreground no-underline hover:bg-primary/90 hover:!text-primary-foreground visited:!text-primary-foreground transition-colors"
         >
           Go home
         </Link>
         <Link
-          href="/trains"
+          href={`/${lang}/trains`}
           className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium !text-foreground no-underline hover:bg-accent hover:!text-accent-foreground visited:!text-foreground transition-colors"
         >
           View trains

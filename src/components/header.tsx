@@ -4,15 +4,28 @@ import { auth } from "@/utils/auth"
 import { headers } from "next/headers"
 import { Nav } from "./nav"
 import { AuthNav } from "./auth-nav"
-export async function Header() {
-  const session = await auth.api.getSession({ headers: await headers() })
+import { LangSwitcher } from "./lang-switcher"
+import { getNavGroups } from "@/lib/nav-db"
+import type { IDictionary } from "@/lib/dictionary"
+
+interface IProps {
+  lang: string
+  dict: IDictionary
+}
+
+export async function Header(props: IProps) {
+  const { lang, dict } = props
+  const [session, navGroups] = await Promise.all([
+    auth.api.getSession({ headers: await headers() }),
+    getNavGroups(),
+  ])
   const role = session?.user.role
 
   return (
     <header className="bg-background/30 backdrop-blur-md border-b border-border w-full relative z-50">
       <div className="flex items-center w-full px-6 py-3 gap-4">
         <Link
-          href="/"
+          href={`/${lang}`}
           className="flex items-center gap-3 no-underline shrink-0 visited:!text-inherit"
         >
           <Image
@@ -28,10 +41,11 @@ export async function Header() {
           </span>
         </Link>
 
-        {session && <Nav role={role} />}
+        <Nav lang={lang} dict={dict} role={role} navGroups={navGroups} />
 
         <div className="ml-auto flex items-center gap-4">
-          <AuthNav session={session} />
+          <LangSwitcher lang={lang} />
+          <AuthNav session={session} lang={lang} dict={dict} />
         </div>
       </div>
     </header>

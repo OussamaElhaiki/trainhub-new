@@ -1,0 +1,201 @@
+{
+  "nav": {
+    "trains": "Trains",
+    "stations": "Gares",
+    "routes": "Lignes",
+    "timetables": "Horaires",
+    "information": "Informations",
+    "administration": "Administration",
+    "departureSchedule": "Horaire des départs",
+    "trainSearch": "Rechercher un train",
+    "allTrains": "Tous les trains",
+    "trainSchedule": "Horaire des trains",
+    "allStations": "Toutes les gares",
+    "arrivalTimes": "Heures d'arrivée",
+    "departures": "Départs",
+    "stationSearch": "Rechercher une gare",
+    "trainRoutes": "Lignes de train",
+    "arrivalDestinations": "Destinations",
+    "routeSearch": "Rechercher une ligne",
+    "dailySchedule": "Horaire quotidien",
+    "platformSchedule": "Horaire par voie",
+    "upcomingDepartures": "Prochains départs",
+    "platforms": "Quais",
+    "carriagesSeats": "Wagons et places",
+    "travelInformation": "Informations voyage",
+    "manageTrains": "Gérer les trains",
+    "manageStations": "Gérer les gares",
+    "manageSchedules": "Gérer les horaires"
+  },
+  "auth": {
+    "signIn": "Connexion",
+    "signOut": "Déconnexion",
+    "signUp": "S'inscrire",
+    "createAccount": "Créer un compte",
+    "signingIn": "Connexion en cours…",
+    "creatingAccount": "Création en cours…",
+    "noAccount": "Pas encore de compte ?",
+    "haveAccount": "Déjà un compte ?"
+  },
+  "home": {
+    "title": "Bienvenue sur TrainHub",
+    "subtitle": "Système de gestion des horaires de la gare de Vilnius",
+    "description": "Naviguez dans le menu ci-dessus pour consulter les horaires, les gares, les lignes et plus encore."
+  },
+  "status": {
+    "on-time": "À l'heure",
+    "delayed": "Retardé",
+    "cancelled": "Annulé",
+    "archived": "Archivé"
+  },
+  "common": {
+    "time": "Heure",
+    "train": "Train",
+    "destination": "Destination",
+    "platform": "Voie",
+    "status": "Statut",
+    "departure": "Départ",
+    "arrival": "Arrivée",
+    "duration": "Durée",
+    "carriages": "Wagons",
+    "seats": "Places",
+    "actions": "Actions",
+    "details": "Détails",
+    "allStations": "Toutes les gares",
+    "filterByStation": "Filtrer par gare",
+    "showing": "Affichage de",
+    "departureWord": "départ",
+    "departuresWord": "départs",
+    "arrivalWord": "arrivée",
+    "arrivalsWord": "arrivées",
+    "contentComingSoon": "Contenu à venir."
+  },
+  "pages": {
+    "departureSchedule": {
+      "title": "Horaire des départs",
+      "subtitle": "Tous les trains au départ de Vilnius, triés par heure de départ.",
+      "filterByArrival": "Filtrer par gare d'arrivée",
+      "noResults": "Aucun départ trouvé pour la gare sélectionnée."
+    },
+    "allTrains": {
+      "title": "Tous les trains",
+      "subtitle": "Gérer la liste des trains au départ de la gare de Vilnius.",
+      "trainRegistered": "train enregistré.",
+      "trainsRegistered": "trains enregistrés.",
+      "trainNumber": "Numéro de train",
+      "noTrains": "Aucun train. Ajoutez le premier ci-dessus."
+    },
+    "trainSchedule": {
+      "title": "Horaire des trains",
+      "subtitle": "Gérer tous les horaires des trains au départ de Vilnius.",
+      "scheduleFound": "horaire trouvé.",
+      "schedulesFound": "horaires trouvés.",
+      "returnDep": "Départ retour",
+      "noSchedules": "Aucun horaire. Ajoutez le premier ci-dessus."
+    },
+    "trainSearch": {
+      "title": "Rechercher un train",
+      "subtitle": "Sélectionnez un train pour voir tous ses horaires.",
+      "selectTrain": "Sélectionner le numéro de train",
+      "chooseTrain": "Choisir un train",
+      "returnDep": "Départ retour",
+      "noResults": "Aucun horaire trouvé pour le train",
+      "hint": "Choisissez un numéro de train pour voir ses horaires."
+    },
+    "allStations": {
+      "title": "Toutes les gares",
+      "subtitle": "Gérer la liste des gares desservies depuis la gare de Vilnius.",
+      "stationRegistered": "gare enregistrée.",
+      "stationsRegistered": "gares enregistrées.",
+      "stationName": "Nom de la gare",
+      "noStations": "Aucune gare. Ajoutez la première ci-dessus."
+    },
+    "arrivalTimes": {
+      "title": "Heures d'arrivée",
+      "subtitle": "Trains arrivant à chaque gare, triés par heure d'arrivée.",
+      "arrivalTime": "Heure d'arrivée",
+      "station": "Gare",
+      "departureVilnius": "Départ (Vilnius)",
+      "noArrivals": "Aucune arrivée trouvée"
+    },
+    "stationDepartures": {
+      "title": "Départs",
+      "subtitle": "Trains retour vers Vilnius depuis chaque gare.",
+      "departsAt": "Départ à",
+      "fromStation": "Depuis",
+      "arrivedAt": "Arrivée à",
+      "noResults": "Aucun départ trouvé"
+    },
+    "stationSearch": {
+      "title": "Rechercher une gare",
+      "subtitle": "Sélectionnez une gare pour voir tous les trains qui la desservent.",
+      "selectStation": "Sélectionner une gare",
+      "chooseStation": "Choisir une gare",
+      "returnDep": "Départ retour",
+      "departureVilnius": "Départ (Vilnius)",
+      "noResults": "Aucun horaire trouvé pour la gare",
+      "hint": "Choisissez une gare pour voir tous les trains qui la desservent."
+    },
+    "trainRoutes": {
+      "title": "Lignes de train",
+      "subtitle": "Toutes les lignes au départ de Vilnius.",
+      "firstDep": "1er départ",
+      "lastDep": "Dernier départ",
+      "journeyTime": "Durée du trajet",
+      "noRoutes": "Aucune ligne disponible.",
+      "viewSchedules": "Voir les horaires"
+    },
+    "arrivalDestinations": {
+      "title": "Destinations",
+      "subtitle": "Toutes les gares accessibles depuis Vilnius.",
+      "trains": "Trains",
+      "nextDep": "Prochain départ",
+      "journey": "Trajet",
+      "noDestinations": "Aucune destination disponible."
+    },
+    "routeSearch": {
+      "title": "Rechercher une ligne",
+      "subtitle": "Trouvez des trains entre Vilnius et votre destination.",
+      "selectDestination": "Sélectionner une destination",
+      "chooseDestination": "Choisir une destination",
+      "returnDep": "Départ retour",
+      "noResults": "Aucun horaire trouvé pour",
+      "hint": "Choisissez une destination pour voir les trains disponibles."
+    },
+    "dailySchedule": {
+      "title": "Horaire quotidien",
+      "subtitle": "Départs groupés par date",
+      "filterByDate": "Filtrer par date",
+      "show": "Afficher",
+      "clear": "Effacer",
+      "noSchedules": "Aucun horaire trouvé"
+    },
+    "platformSchedule": {
+      "title": "Horaire par quai",
+      "subtitle": "Départs groupés par quai",
+      "filterByPlatform": "Filtrer par quai",
+      "allPlatforms": "Tous les quais",
+      "platform": "Quai",
+      "noSchedules": "Aucun horaire trouvé"
+    },
+    "upcomingDepartures": {
+      "title": "Prochains départs",
+      "scheduledFromNow": "à venir",
+      "to": "vers",
+      "filterByDest": "Filtrer par destination",
+      "allDestinations": "Toutes les destinations",
+      "noResults": "Aucun prochain départ trouvé"
+    },
+    "details": {
+      "button": "Détails",
+      "statusLabel": "Statut",
+      "departureVilnius": "Départ de Vilnius",
+      "arrivalAt": "Arrivée à",
+      "departureFrom": "Départ de",
+      "travelDuration": "Durée du trajet",
+      "platform": "Voie",
+      "carriages": "Wagons",
+      "totalSeats": "Places totales"
+    }
+  }
+}

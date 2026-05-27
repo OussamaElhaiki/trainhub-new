@@ -8,19 +8,26 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import type { IState } from "@/types/action-t"
+import type { IDictionary } from "@/lib/dictionary"
 
 const INITIAL: IState = { isSaved: false }
 
-function SubmitButton() {
+interface IProps {
+  lang: string
+  dict: IDictionary
+}
+
+function SubmitButton(props: { label: string; pending: string }) {
   const { pending } = useFormStatus()
   return (
     <Button type="submit" className="w-full" disabled={pending}>
-      {pending ? "Creating account…" : "Create account"}
+      {pending ? props.pending : props.label}
     </Button>
   )
 }
 
-export function RegisterForm() {
+export function RegisterForm(props: IProps) {
+  const { lang, dict } = props
   const [state, action] = useActionState<IState, FormData>(signupAction, INITIAL)
 
   if (state.isSaved) {
@@ -28,7 +35,7 @@ export function RegisterForm() {
       <div className="text-center space-y-4">
         <p className="text-sm text-green-500">{state.message}</p>
         <Button asChild variant="outline" size="sm">
-          <Link href="/signin">Sign in</Link>
+          <Link href={`/${lang}/signin`}>{dict.auth.signIn}</Link>
         </Button>
       </div>
     )
@@ -72,12 +79,12 @@ export function RegisterForm() {
         <p className="text-xs text-destructive">{state.message}</p>
       )}
 
-      <SubmitButton />
+      <SubmitButton label={dict.auth.createAccount} pending={dict.auth.creatingAccount} />
 
       <p className="text-center text-xs text-muted-foreground">
-        Already have an account?{" "}
-        <Link href="/signin" className="text-primary hover:underline">
-          Sign in
+        {dict.auth.haveAccount}{" "}
+        <Link href={`/${lang}/signin`} className="text-primary hover:underline">
+          {dict.auth.signIn}
         </Link>
       </p>
     </form>

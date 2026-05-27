@@ -2,26 +2,30 @@ import Link from "next/link"
 import { signoutAction } from "@/actions/signout-action"
 import { Button } from "@/components/ui/button"
 import type { auth } from "@/utils/auth"
+import type { IDictionary } from "@/lib/dictionary"
 
 type ISession = typeof auth.$Infer.Session
 
 interface IProps {
   session: ISession | null
+  lang: string
+  dict: IDictionary
 }
 
 export function AuthNav(props: IProps) {
-  const { session } = props
+  const { session, lang, dict } = props
+
   if (!session) {
     return (
       <ul className="grid grid-flow-col w-fit gap-x-2">
         <li>
           <Button asChild variant="ghost" size="sm">
-            <Link href="/signin">Sign in</Link>
+            <Link href={`/${lang}/signin`}>{dict.auth.signIn}</Link>
           </Button>
         </li>
         <li>
           <Button asChild size="sm">
-            <Link href="/signup">Sign up</Link>
+            <Link href={`/${lang}/signup`}>{dict.auth.signUp}</Link>
           </Button>
         </li>
       </ul>
@@ -39,7 +43,7 @@ export function AuthNav(props: IProps) {
       <li>
         <form action={signoutAction}>
           <Button type="submit" variant="ghost" size="sm">
-            Sign out
+            {dict.auth.signOut}
           </Button>
         </form>
       </li>

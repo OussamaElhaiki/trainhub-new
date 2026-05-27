@@ -10,8 +10,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import type { ISchedule } from "@/types/schedule-t"
 import { calculateDuration, statusConfig, formatDateTime } from "@/lib/train-utils"
+import { useDict } from "@/lib/dictionary-context"
+import type { ISchedule } from "@/types/schedule-t"
 
 interface IProps {
   schedule: ISchedule
@@ -20,57 +21,60 @@ interface IProps {
 export function TrainDetailsDialog(props: IProps) {
   const { schedule } = props
   const [open, setOpen] = useState(false)
-  const status = statusConfig[schedule.status]
+  const dict = useDict()
+  const p = dict.pages.details
+  const sc = statusConfig[schedule.status]
+  const statusLabel = dict.status[schedule.status as keyof typeof dict.status]
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" size="sm">
-          <InfoIcon className="size-3.5" /> Details
+          <InfoIcon className="size-3.5" /> {p.button}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>
-            Train {schedule.trainNumber} — {schedule.arrivalStation}
+            {dict.common.train} {schedule.trainNumber} — {schedule.arrivalStation}
           </DialogTitle>
         </DialogHeader>
 
         <div className="mt-2 space-y-3 text-sm">
           <div className="flex items-center justify-between border-b border-border pb-2">
-            <span className="text-muted-foreground">Status</span>
-            <span className={`rounded-full border px-2.5 py-0.5 text-xs font-semibold ${status.className}`}>
-              {status.label}
+            <span className="text-muted-foreground">{p.statusLabel}</span>
+            <span className={`rounded-full border px-2.5 py-0.5 text-xs font-semibold ${sc.className}`}>
+              {statusLabel}
             </span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-muted-foreground">Departure from Vilnius</span>
+            <span className="text-muted-foreground">{p.departureVilnius}</span>
             <span className="font-medium">{formatDateTime(schedule.departureTime)}</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-muted-foreground">Arrival at {schedule.arrivalStation}</span>
+            <span className="text-muted-foreground">{p.arrivalAt} {schedule.arrivalStation}</span>
             <span className="font-medium">{formatDateTime(schedule.arrivalTime)}</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-muted-foreground">Departure from {schedule.arrivalStation}</span>
+            <span className="text-muted-foreground">{p.departureFrom} {schedule.arrivalStation}</span>
             <span className="font-medium">{formatDateTime(schedule.arrivalDepartureTime)}</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-muted-foreground">Travel duration</span>
+            <span className="text-muted-foreground">{p.travelDuration}</span>
             <span className="font-medium">
               {calculateDuration(schedule.departureTime, schedule.arrivalTime)}
             </span>
           </div>
           <div className="flex items-center justify-between border-t border-border pt-2">
-            <span className="text-muted-foreground">Platform</span>
+            <span className="text-muted-foreground">{p.platform}</span>
             <span className="font-medium">{schedule.platform}</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-muted-foreground">Carriages</span>
+            <span className="text-muted-foreground">{p.carriages}</span>
             <span className="font-medium">{schedule.carriages}</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-muted-foreground">Total seats</span>
+            <span className="text-muted-foreground">{p.totalSeats}</span>
             <span className="font-medium">{schedule.seats}</span>
           </div>
         </div>

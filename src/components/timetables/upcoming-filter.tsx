@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
+import { useDict } from "@/lib/dictionary-context"
 
 interface IProps {
   destinations: string[]
@@ -19,6 +20,8 @@ export function UpcomingFilter(props: IProps) {
   const { destinations, selected } = props
   const formRef = useRef<HTMLFormElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const dict = useDict()
+  const p = dict.pages.upcomingDepartures
 
   function handleChange(value: string) {
     if (inputRef.current) inputRef.current.value = value === "all" ? "" : value
@@ -27,18 +30,16 @@ export function UpcomingFilter(props: IProps) {
 
   return (
     <form ref={formRef} method="GET" className="space-y-1.5">
-      <Label>Filter by destination</Label>
+      <Label>{p.filterByDest}</Label>
       <input ref={inputRef} type="hidden" name="destination" defaultValue={selected} />
       <Select defaultValue={selected || "all"} onValueChange={handleChange}>
         <SelectTrigger className="w-56">
-          <SelectValue placeholder="All destinations" />
+          <SelectValue placeholder={p.allDestinations} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">All destinations</SelectItem>
+          <SelectItem value="all">{p.allDestinations}</SelectItem>
           {destinations.map((d) => (
-            <SelectItem key={d} value={d}>
-              {d}
-            </SelectItem>
+            <SelectItem key={d} value={d}>{d}</SelectItem>
           ))}
         </SelectContent>
       </Select>

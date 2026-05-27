@@ -1,17 +1,16 @@
 import { NextRequest, NextResponse } from "next/server"
-import { headers } from "next/headers"
 import { auth } from "@/utils/auth"
 import { Role } from "@/constants/role"
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  if (!pathname.startsWith("/admin")) {
+  if (!pathname.match(/^\/(en|lt)\/admin/)) {
     return NextResponse.next()
   }
 
   const session = await auth.api.getSession({
-    headers: await headers()
+    headers: request.headers,
   })
 
   if (session?.user.role !== Role.Administrator) {

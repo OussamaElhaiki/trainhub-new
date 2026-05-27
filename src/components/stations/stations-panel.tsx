@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/table"
 import { StationFormDialog } from "@/components/stations/station-form-dialog"
 import { DeleteConfirmDialog } from "@/components/trains/delete-confirm-dialog"
+import { useDict } from "@/lib/dictionary-context"
 import type { IStation } from "@/types/station-t"
 
 interface IProps {
@@ -20,6 +21,9 @@ interface IProps {
 
 export function StationsPanel(props: IProps) {
   const [stations, setStations] = useState(props.stations)
+  const dict = useDict()
+  const p = dict.pages.allStations
+  const c = dict.common
 
   async function refresh() {
     const data = await getApi<IStation[]>("/api/stations")
@@ -35,7 +39,7 @@ export function StationsPanel(props: IProps) {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">
-          {stations.length} station{stations.length !== 1 ? "s" : ""} registered.
+          {stations.length} {stations.length !== 1 ? p.stationsRegistered : p.stationRegistered}
         </p>
         <StationFormDialog onSuccess={refresh} />
       </div>
@@ -44,15 +48,15 @@ export function StationsPanel(props: IProps) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Station name</TableHead>
-              <TableHead className="w-32 text-right">Actions</TableHead>
+              <TableHead>{p.stationName}</TableHead>
+              <TableHead className="w-32 text-right">{c.actions}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {stations.length === 0 && (
               <TableRow>
                 <TableCell colSpan={2} className="text-center text-muted-foreground py-8">
-                  No stations yet. Add the first one above.
+                  {p.noStations}
                 </TableCell>
               </TableRow>
             )}

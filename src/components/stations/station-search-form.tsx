@@ -19,6 +19,7 @@ import {
 import { Label } from "@/components/ui/label"
 import { statusConfig, calculateDuration, formatDateTime, sortByDepartureTime } from "@/lib/train-utils"
 import { TrainDetailsDialog } from "@/components/trains/train-details-dialog"
+import { useDict } from "@/lib/dictionary-context"
 import type { ISchedule } from "@/types/schedule-t"
 import type { IStation } from "@/types/station-t"
 import { ScheduleStatus } from "@/constants/status"
@@ -32,6 +33,9 @@ interface IProps {
 export function StationSearchForm(props: IProps) {
   const { stations, schedules } = props
   const [selected, setSelected] = useState(props.selected)
+  const dict = useDict()
+  const p = dict.pages.stationSearch
+  const c = dict.common
 
   const results = selected
     ? schedules.filter((s) => s.arrivalStation === selected)
@@ -42,16 +46,14 @@ export function StationSearchForm(props: IProps) {
   return (
     <div className="space-y-6">
       <div className="space-y-1.5">
-        <Label>Select station</Label>
+        <Label>{p.selectStation}</Label>
         <Select value={selected} onValueChange={setSelected}>
           <SelectTrigger className="w-64">
-            <SelectValue placeholder="Choose a station" />
+            <SelectValue placeholder={p.chooseStation} />
           </SelectTrigger>
           <SelectContent>
             {stations.map((s) => (
-              <SelectItem key={s.id} value={s.name}>
-                {s.name}
-              </SelectItem>
+              <SelectItem key={s.id} value={s.name}>{s.name}</SelectItem>
             ))}
           </SelectContent>
         </Select>
@@ -59,7 +61,7 @@ export function StationSearchForm(props: IProps) {
 
       {selected && sorted.length === 0 && (
         <p className="text-sm text-muted-foreground">
-          No schedules found for station <span className="font-medium">{selected}</span>.
+          {p.noResults} <span className="font-medium">{selected}</span>.
         </p>
       )}
 
@@ -68,21 +70,22 @@ export function StationSearchForm(props: IProps) {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Train</TableHead>
-                <TableHead>Departure (Vilnius)</TableHead>
-                <TableHead>Arrival</TableHead>
-                <TableHead>Return dep.</TableHead>
-                <TableHead>Duration</TableHead>
-                <TableHead>Platform</TableHead>
-                <TableHead>Carriages</TableHead>
-                <TableHead>Seats</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>{c.train}</TableHead>
+                <TableHead>{p.departureVilnius}</TableHead>
+                <TableHead>{c.arrival}</TableHead>
+                <TableHead>{p.returnDep}</TableHead>
+                <TableHead>{c.duration}</TableHead>
+                <TableHead>{c.platform}</TableHead>
+                <TableHead>{c.carriages}</TableHead>
+                <TableHead>{c.seats}</TableHead>
+                <TableHead>{c.status}</TableHead>
                 <TableHead />
               </TableRow>
             </TableHeader>
             <TableBody>
               {sorted.map((schedule) => {
-                const status = statusConfig[schedule.status]
+                const sc = statusConfig[schedule.status]
+                const statusLabel = dict.status[schedule.status as keyof typeof dict.status]
                 return (
                   <TableRow
                     key={schedule.id}
@@ -99,8 +102,8 @@ export function StationSearchForm(props: IProps) {
                     <TableCell>{schedule.carriages}</TableCell>
                     <TableCell>{schedule.seats}</TableCell>
                     <TableCell>
-                      <span className={`rounded-full border px-2 py-0.5 text-xs font-semibold ${status.className}`}>
-                        {status.label}
+                      <span className={`rounded-full border px-2 py-0.5 text-xs font-semibold ${sc.className}`}>
+                        {statusLabel}
                       </span>
                     </TableCell>
                     <TableCell className="text-right">
@@ -115,9 +118,7 @@ export function StationSearchForm(props: IProps) {
       )}
 
       {!selected && (
-        <p className="text-sm text-muted-foreground">
-          Choose a station above to see all trains serving it.
-        </p>
+        <p className="text-sm text-muted-foreground">{p.hint}</p>
       )}
     </div>
   )

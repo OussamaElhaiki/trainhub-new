@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/table"
 import { TrainFormDialog } from "@/components/trains/train-form-dialog"
 import { DeleteConfirmDialog } from "@/components/trains/delete-confirm-dialog"
+import { useDict } from "@/lib/dictionary-context"
 import type { ITrain } from "@/types/train-t"
 
 interface IProps {
@@ -20,6 +21,9 @@ interface IProps {
 
 export function TrainsPanel(props: IProps) {
   const [trains, setTrains] = useState(props.trains)
+  const dict = useDict()
+  const p = dict.pages.allTrains
+  const c = dict.common
 
   async function refresh() {
     const data = await getApi<ITrain[]>("/api/trains")
@@ -34,7 +38,9 @@ export function TrainsPanel(props: IProps) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">{trains.length} train{trains.length !== 1 ? "s" : ""} registered.</p>
+        <p className="text-sm text-muted-foreground">
+          {trains.length} {trains.length !== 1 ? p.trainsRegistered : p.trainRegistered}
+        </p>
         <TrainFormDialog onSuccess={refresh} />
       </div>
 
@@ -42,15 +48,15 @@ export function TrainsPanel(props: IProps) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Train number</TableHead>
-              <TableHead className="w-32 text-right">Actions</TableHead>
+              <TableHead>{p.trainNumber}</TableHead>
+              <TableHead className="w-32 text-right">{c.actions}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {trains.length === 0 && (
               <TableRow>
                 <TableCell colSpan={2} className="text-center text-muted-foreground py-8">
-                  No trains yet. Add the first one above.
+                  {p.noTrains}
                 </TableCell>
               </TableRow>
             )}
