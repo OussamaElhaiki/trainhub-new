@@ -37,6 +37,7 @@ export function StationFormDialog(props: IProps) {
       handleOpenChange(false)
       onSuccess?.()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state])
 
   return (

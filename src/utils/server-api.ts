@@ -6,7 +6,7 @@ export const getApi = async <T>(
 ): Promise<T | undefined> => {
   const response = await fetch(`${SITE}${url}`, options)
   try {
-    return await response.json() as T
+    return await response.json() as unknown as T
   } catch (error) {
     console.log(error)
     return undefined

@@ -2,6 +2,7 @@
 
 import { auth } from "@/utils/auth"
 import { registerSchema } from "@/dto/register-dto"
+import { headers } from "next/headers"
 import type { IState } from "@/types/action-t"
 import z from "zod"
 
@@ -20,7 +21,7 @@ export async function signupAction(
   if (!result.success) {
     return {
       isSaved: false,
-      errors: z.flattenError(result.error).fieldErrors as Record<string, string[]>,
+      errors: z.flattenError(result.error).fieldErrors as unknown as Record<string, string[]>,
       fields: {
         name: String(raw.name ?? ""),
         email: String(raw.email ?? ""),
@@ -30,16 +31,34 @@ export async function signupAction(
 
   const { name, email, password } = result.data
 
-  const response = await auth.api.signUpEmail({
-    body: { name, email, password },
-    asResponse: true,
-  })
+  try {
+    await auth.api.signUpEmail({
+      body: { name, email, password },
+      headers: await headers(),
+    })
+  } catch (error) {
+    console.error("Sign up error:", error)
+    const errorMessage = error instanceof Error ? error.message : "Unknown error"
 
-  if (!response.ok) {
-    const json = await response.json().catch(() => ({}))
+    if (errorMessage.includes("already exists") || errorMessage.includes("email")) {
+      return {
+        isSaved: false,
+        errors: { email: ["This email is already registered"] },
+        message: "Failed to sign up",
+      }
+    }
+
+    if (errorMessage.includes("Password too short") || errorMessage.includes("Password is too short")) {
+      return {
+        isSaved: false,
+        errors: { password: ["Password must be at least 8 characters long"] },
+        message: "Password is too short",
+      }
+    }
+
     return {
       isSaved: false,
-      message: (json as { message?: string }).message ?? "Registration failed",
+      message: errorMessage || "Failed to sign up",
     }
   }
 

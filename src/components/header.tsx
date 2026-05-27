@@ -4,8 +4,6 @@ import { auth } from "@/utils/auth"
 import { headers } from "next/headers"
 import { Nav } from "./nav"
 import { AuthNav } from "./auth-nav"
-import { NavSearch } from "./nav-search/nav-search"
-
 export async function Header() {
   const session = await auth.api.getSession({ headers: await headers() })
   const role = session?.user.role
@@ -33,7 +31,6 @@ export async function Header() {
         {session && <Nav role={role} />}
 
         <div className="ml-auto flex items-center gap-4">
-          {session && <NavSearch />}
           <AuthNav session={session} />
         </div>
       </div>
