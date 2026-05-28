@@ -1,5 +1,6 @@
 import { getDictionary } from "@/lib/dictionary"
 
+//throw new Error("test")
 interface IProps {
   params: Promise<{ lang: string }>
 }

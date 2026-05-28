@@ -1,6 +1,6 @@
 import Link from "next/link"
-import { signoutAction } from "@/actions/signout-action"
 import { Button } from "@/components/ui/button"
+import { SignOutButton } from "@/components/signout-button"
 import type { auth } from "@/utils/auth"
 import type { IDictionary } from "@/lib/dictionary"
 
@@ -41,11 +41,7 @@ export function AuthNav(props: IProps) {
         </span>
       </li>
       <li>
-        <form action={signoutAction}>
-          <Button type="submit" variant="ghost" size="sm">
-            {dict.auth.signOut}
-          </Button>
-        </form>
+        <SignOutButton label={dict.auth.signOut} />
       </li>
     </ul>
   )

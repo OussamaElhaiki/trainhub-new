@@ -17,7 +17,11 @@ test("departure schedule page loads", async ({ page }) => {
 })
 
 test("navigation menu opens", async ({ page }) => {
-  await page.goto("/en")
+  await page.goto("/en/signin")
+  await page.fill('input[name="email"]', "napo@panko.lt")
+  await page.fill('input[name="password"]', "12345678")
+  await page.getByRole("button", { name: /sign in/i }).click()
+  await page.waitForURL(/\/en/)
   await page.getByRole("button", { name: /trains/i }).click()
   await expect(page.getByRole("link", { name: /departure schedule/i })).toBeVisible()
 })
@@ -47,6 +51,10 @@ test("FR sign in page loads", async ({ page }) => {
 })
 
 test("navigation has trains menu", async ({ page }) => {
-  await page.goto("/en")
-  await expect(page.getByRole("button", { name: /trains/i })).toBeVisible()
+  await page.goto("/en/signin")
+  await page.fill('input[name="email"]', "napo@panko.lt")
+  await page.fill('input[name="password"]', "12345678")
+  await page.getByRole("button", { name: /sign in/i }).click()
+  await page.waitForURL(/\/en$/)
+  await expect(page.getByRole("button", { name: /trains/i })).toBeVisible({ timeout: 10000 })
 })
