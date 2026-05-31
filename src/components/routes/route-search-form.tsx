@@ -18,7 +18,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Label } from "@/components/ui/label"
-import { statusConfig, calculateDuration, formatDateTime, sortByDepartureTime } from "@/lib/train-utils"
+import { statusConfig, calculateDuration, formatDateTime, sortByDepartureTime, filterByStation } from "@/lib/train-utils"
 import { TrainDetailsDialog } from "@/components/trains/train-details-dialog"
 import { useDict } from "@/lib/dictionary-context"
 import type { ISchedule } from "@/types/schedule-t"
@@ -37,9 +37,7 @@ export function RouteSearchForm(props: IProps) {
   const p = dict.pages.routeSearch
   const c = dict.common
 
-  const results = sortByDepartureTime(
-    selected ? schedules.filter((s) => s.arrivalStation === selected) : []
-  )
+  const results = sortByDepartureTime(filterByStation(schedules, selected))
 
   return (
     <div className="space-y-6">

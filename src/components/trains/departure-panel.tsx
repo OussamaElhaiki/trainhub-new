@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
-import { statusConfig, formatDateTime } from "@/lib/train-utils"
+import { statusConfig, formatDateTime, filterByStation } from "@/lib/train-utils"
 import { TrainDetailsDialog } from "@/components/trains/train-details-dialog"
 import { useDict } from "@/lib/dictionary-context"
 import type { ISchedule } from "@/types/schedule-t"
@@ -35,9 +35,7 @@ export function DeparturePanel(props: IProps) {
   const p = dict.pages.departureSchedule
   const c = dict.common
 
-  const filtered = selectedStation
-    ? schedules.filter((s) => s.arrivalStation === selectedStation)
-    : schedules
+  const filtered = filterByStation(schedules, selectedStation)
 
   return (
     <div className="space-y-4">

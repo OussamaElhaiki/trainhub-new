@@ -1,6 +1,7 @@
-import { getSchedules } from "@/lib/schedule-db"
+import { getApi } from "@/utils/server-api"
 import { getDictionary } from "@/lib/dictionary"
-import { sortByDepartureTime, statusConfig, getUniquePlatforms } from "@/lib/train-utils"
+import { sortByDepartureTime, statusConfig, getUniquePlatforms, filterActiveSchedules } from "@/lib/train-utils"
+import type { ISchedule } from "@/types/schedule-t"
 import {
   Table,
   TableBody,
@@ -9,7 +10,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { ScheduleStatus } from "@/constants/status"
 import { PlatformFilter } from "@/components/timetables/platform-filter"
 
 interface IProps {
@@ -20,11 +20,14 @@ interface IProps {
 export default async function PlatformSchedulesPage(props: IProps) {
   const { lang } = await props.params
   const { platform } = await props.searchParams
-  const [all, dict] = await Promise.all([getSchedules(), getDictionary(lang)])
+  const [all, dict] = await Promise.all([
+    getApi<ISchedule[]>("/api/schedules").then((r) => r ?? []),
+    getDictionary(lang),
+  ])
   const p = dict.pages.platformSchedule
   const c = dict.common
 
-  const active = all.filter((s) => s.status !== ScheduleStatus.Archived)
+  const active = filterActiveSchedules(all)
   const allPlatforms = getUniquePlatforms(active)
   const filtered = platform ? active.filter((s) => s.platform === platform) : active
   const sorted = sortByDepartureTime(filtered)

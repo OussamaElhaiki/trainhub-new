@@ -1,6 +1,7 @@
-import { getSchedules } from "@/lib/schedule-db"
+import { getApi } from "@/utils/server-api"
 import { getDictionary } from "@/lib/dictionary"
-import { formatDateTime, sortByDepartureTime, calculateDuration, statusConfig, getUniqueDestinations } from "@/lib/train-utils"
+import { formatDateTime, sortByDepartureTime, calculateDuration, statusConfig, getUniqueDestinations, filterActiveSchedules } from "@/lib/train-utils"
+import type { ISchedule } from "@/types/schedule-t"
 import {
   Table,
   TableBody,
@@ -9,7 +10,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { ScheduleStatus } from "@/constants/status"
 import { UpcomingFilter } from "@/components/timetables/upcoming-filter"
 
 interface IProps {
@@ -20,12 +20,15 @@ interface IProps {
 export default async function UpcomingDeparturesPage(props: IProps) {
   const { lang } = await props.params
   const { destination } = await props.searchParams
-  const [all, dict] = await Promise.all([getSchedules(), getDictionary(lang)])
+  const [all, dict] = await Promise.all([
+    getApi<ISchedule[]>("/api/schedules").then((r) => r ?? []),
+    getDictionary(lang),
+  ])
   const p = dict.pages.upcomingDepartures
   const c = dict.common
 
   const now = new Date().toISOString().slice(0, 16)
-  const active = all.filter((s) => s.status !== ScheduleStatus.Archived && s.departureTime > now)
+  const active = filterActiveSchedules(all).filter((s) => s.departureTime > now)
   const destinations = getUniqueDestinations(active)
   const filtered = destination ? active.filter((s) => s.arrivalStation === destination) : active
   const upcoming = sortByDepartureTime(filtered)

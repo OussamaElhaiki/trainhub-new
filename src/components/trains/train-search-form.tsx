@@ -17,7 +17,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Label } from "@/components/ui/label"
-import { statusConfig, calculateDuration, formatDateTime } from "@/lib/train-utils"
+import { statusConfig, calculateDuration, formatDateTime, filterByTrain } from "@/lib/train-utils"
 import { useDict } from "@/lib/dictionary-context"
 import type { ISchedule } from "@/types/schedule-t"
 import type { ITrain } from "@/types/train-t"
@@ -36,9 +36,7 @@ export function TrainSearchForm(props: IProps) {
   const p = dict.pages.trainSearch
   const c = dict.common
 
-  const results = selected
-    ? schedules.filter((s) => s.trainNumber === selected)
-    : []
+  const results = filterByTrain(schedules, selected)
 
   return (
     <div className="space-y-6">

@@ -60,6 +60,14 @@ export function filterActiveSchedules(schedules: ISchedule[]): ISchedule[] {
   return schedules.filter((s) => s.status !== ScheduleStatus.Archived)
 }
 
+export function filterByStation(schedules: ISchedule[], station: string): ISchedule[] {
+  return station ? schedules.filter((s) => s.arrivalStation === station) : schedules
+}
+
+export function filterByTrain(schedules: ISchedule[], trainNumber: string): ISchedule[] {
+  return trainNumber ? schedules.filter((s) => s.trainNumber === trainNumber) : schedules
+}
+
 export type IRouteGroup = {
   destination: string
   count: number

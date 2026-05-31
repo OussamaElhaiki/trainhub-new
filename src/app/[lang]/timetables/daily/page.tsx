@@ -1,6 +1,7 @@
-import { getSchedules } from "@/lib/schedule-db"
+import { getApi } from "@/utils/server-api"
 import { getDictionary } from "@/lib/dictionary"
-import { sortByDepartureTime } from "@/lib/train-utils"
+import { sortByDepartureTime, filterActiveSchedules } from "@/lib/train-utils"
+import type { ISchedule } from "@/types/schedule-t"
 import {
   Table,
   TableBody,
@@ -9,7 +10,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { ScheduleStatus } from "@/constants/status"
 import { DailyFilter } from "@/components/timetables/daily-filter"
 
 interface IProps {
@@ -20,11 +20,14 @@ interface IProps {
 export default async function DailySchedulesPage(props: IProps) {
   const { lang } = await props.params
   const { date } = await props.searchParams
-  const [all, dict] = await Promise.all([getSchedules(), getDictionary(lang)])
+  const [all, dict] = await Promise.all([
+    getApi<ISchedule[]>("/api/schedules").then((r) => r ?? []),
+    getDictionary(lang),
+  ])
   const p = dict.pages.dailySchedule
   const c = dict.common
 
-  const active = all.filter((s) => s.status !== ScheduleStatus.Archived)
+  const active = filterActiveSchedules(all)
   const sorted = sortByDepartureTime(active)
   const filtered = date ? sorted.filter((s) => s.departureTime.startsWith(date)) : sorted
 
